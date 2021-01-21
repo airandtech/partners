@@ -1,12 +1,13 @@
 import { Component } from "react";
 import {baseUrl, processResponse, showTopNotification} from '../../utilities';
-
+const ls = require('local-storage');
 export default class Login extends Component{
     constructor(props){
         super(props);
         this.state ={
             username: '',
             password: '',
+            rememberMe: false,
             loading: false,
             isLoginInvalid: false,
             isSignupInvalid: false,
@@ -15,11 +16,20 @@ export default class Login extends Component{
         }
        
     }
+    
+    componentDidMount = () => {
+        let sessionToken = sessionStorage.getItem('token');
+        let localToken = ls.get('token');
+        if(sessionToken || localToken){
+            this.props.history.push('/dashboard')
+        }
+    }
 
     handleLogin = (e) => {
         const { location, history } = this.props
         e.preventDefault();
         this.setState({loading: true})
+        console.log(this.state.rememberMe)
         fetch(baseUrl() + 'users/authenticate/', {
             method: 'post',
             headers: {
@@ -29,10 +39,11 @@ export default class Login extends Component{
           })
             .then(processResponse)
             .then((res) => {
-              console.warn(`DATA==> ${JSON.stringify(res.data)}`);
               if (res.statusCode === 200) {
-                console.log(res.data)
-                history.push("/home")
+                this.state.rememberMe ? ls.set('token', res.data.token) : sessionStorage.setItem('token', res.data.token)
+                ls.set('isSetupComplete', res.data.isSetupComplete)
+                ls.set('username', res.data.username)
+                res.data.isSetupComplete ? history.push("/home") : history.push("/account")
               } else {
                 this.setState({loading: false, isLoginInvalid: true, authMessage: res.data.message});
               }
@@ -48,7 +59,7 @@ export default class Login extends Component{
         this.setState({loading: true})
 
         if(!this.state.acceptedTerms){
-            this.setState({loading: false, isSignupInvalid: true, authMessage: "Terms and Conditions must be accepted to proceed !!!"});
+            this.setState({loading: false, isSignupInvalid: true, authMessage: "Kindly accept the Terms and Conditions!!!"});
             return;
         }
         fetch(baseUrl() + 'users/register/', {
@@ -60,9 +71,9 @@ export default class Login extends Component{
           })
             .then(processResponse)
             .then((res) => {
-              console.warn(`DATA==> ${JSON.stringify(res.data)}`);
               if (res.statusCode === 200) {
-                console.log(res.data)
+                sessionStorage.setItem('token', res.data.token);
+                res.data.isSetupComplete ? history.push("/home") : history.push("/account")
                 history.push("/home")
               } else {
                 this.setState({loading: false, isSignupInvalid: true, authMessage: res.data.message});
@@ -136,7 +147,7 @@ export default class Login extends Component{
                                         </div>
                                         <div className="form-group mb-3">
                                             <div className="custom-control custom-checkbox">
-                                                <input type="checkbox" className="custom-control-input" id="checkbox-signin" />
+                                                <input type="checkbox" className="custom-control-input" id="checkbox-signin" checked={this.state.rememberMe} onChange={ e => this.setState({rememberMe: e.target.checked})} />
                                                 <label className="custom-control-label" htmlFor="checkbox-signin">Remember me</label>
                                             </div>
                                         </div>
@@ -156,16 +167,16 @@ export default class Login extends Component{
                                             <p className="text-muted font-16">Sign in with</p>
                                             <ul className="social-list list-inline mt-3">
                                                 <li className="list-inline-item">
-                                                    <a href="javascript: void(0);" className="social-list-item border-primary text-primary"><i className="mdi mdi-facebook"></i></a>
+                                                    <a href="#" className="social-list-item border-primary text-primary"><i className="mdi mdi-facebook"></i></a>
                                                 </li>
                                                 <li className="list-inline-item">
-                                                    <a href="javascript: void(0);" className="social-list-item border-danger text-danger"><i className="mdi mdi-google"></i></a>
+                                                    <a href="#" className="social-list-item border-danger text-danger"><i className="mdi mdi-google"></i></a>
                                                 </li>
                                                 <li className="list-inline-item">
-                                                    <a href="javascript: void(0);" className="social-list-item border-info text-info"><i className="mdi mdi-twitter"></i></a>
+                                                    <a href="#" className="social-list-item border-info text-info"><i className="mdi mdi-twitter"></i></a>
                                                 </li>
                                                 <li className="list-inline-item">
-                                                    <a href="javascript: void(0);" className="social-list-item border-secondary text-secondary"><i className="mdi mdi-github"></i></a>
+                                                    <a href="#" className="social-list-item border-secondary text-secondary"><i className="mdi mdi-github"></i></a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -198,7 +209,7 @@ export default class Login extends Component{
                                         <div className="form-group">
                                             <div className="custom-control custom-checkbox">
                                                 <input onChange={ e => this.setState({acceptedTerms: e.target.checked})} type="checkbox" className="custom-control-input" id="checkbox-signup" />
-                                                <label className="custom-control-label" htmlFor="checkbox-signup">I accept <a href="javascript: void(0);" className="text-dark">Terms and Conditions</a></label>
+                                                <label className="custom-control-label" htmlFor="checkbox-signup">I accept <a href="#" className="text-dark">Terms and Conditions</a></label>
                                             </div>
                                         </div>
                                         <div className="form-group mb-0 text-center">
@@ -216,16 +227,16 @@ export default class Login extends Component{
                                             <p className="text-muted font-16">Sign up with</p>
                                             <ul className="social-list list-inline mt-3 mb-0">
                                                 <li className="list-inline-item">
-                                                    <a href="javascript: void(0);" className="social-list-item border-primary text-primary"><i className="mdi mdi-facebook"></i></a>
+                                                    <a href="#" className="social-list-item border-primary text-primary"><i className="mdi mdi-facebook"></i></a>
                                                 </li>
                                                 <li className="list-inline-item">
-                                                    <a href="javascript: void(0);" className="social-list-item border-danger text-danger"><i className="mdi mdi-google"></i></a>
+                                                    <a href="#" className="social-list-item border-danger text-danger"><i className="mdi mdi-google"></i></a>
                                                 </li>
                                                 <li className="list-inline-item">
-                                                    <a href="javascript: void(0);" className="social-list-item border-info text-info"><i className="mdi mdi-twitter"></i></a>
+                                                    <a href="#" className="social-list-item border-info text-info"><i className="mdi mdi-twitter"></i></a>
                                                 </li>
                                                 <li className="list-inline-item">
-                                                    <a href="javascript: void(0);" className="social-list-item border-secondary text-secondary"><i className="mdi mdi-github"></i></a>
+                                                    <a href="#" className="social-list-item border-secondary text-secondary"><i className="mdi mdi-github"></i></a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -235,7 +246,7 @@ export default class Login extends Component{
                             </div>
     
                             <footer className="footer footer-alt">
-                                <p className="text-muted">2021 - <script>document.write(new Date().getFullYear())</script> &copy; Admin Portal by <a href="javascript: void(0);" className="text-muted">Airand Tech</a> </p>
+                                <p className="text-muted">2021 - <script>document.write(new Date().getFullYear())</script> &copy; Admin Portal by <a href="#" className="text-muted">Airand Tech</a> </p>
                             </footer>
     
                         </div> {/* end .card-body */}

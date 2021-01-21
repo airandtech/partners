@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Web site created using create-react-app" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
@@ -24,39 +22,41 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>Airand Portal</title>
+  <title>Airand Portal</title>
 
 
-      <!-- App favicon -->
-      <link rel="shortcut icon" href="../assets/images/favicon.ico">
+  <!-- App favicon -->
+  <link rel="shortcut icon" href="./assets/images/favicon.ico">
 
-      <!-- App css -->
-      <link href="./assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bs-default-stylesheet" />
-      <link href="./assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-default-stylesheet" />
+  <!-- App css -->
+  <link href="./assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bs-default-stylesheet" />
+  <link href="./assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-default-stylesheet" />
+
+  <link href="./assets/css/bootstrap-dark.min.css" rel="stylesheet" type="text/css" id="bs-dark-stylesheet" />
+  <link href="./assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="app-dark-stylesheet" />
+
+  <!-- icons -->
+  <link href="./assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
+  <!-- Jquery Toast css -->
+  <link href="./assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
+
+
+  <!-- icons -->
+  <link href="./assets/css/icons.min.css" rel="stylesheet" type="text/css" />
   
-      <link href="./assets/css/bootstrap-dark.min.css" rel="stylesheet" type="text/css" id="bs-dark-stylesheet" />
-      <link href="./assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="app-dark-stylesheet" />
-  
-      <!-- icons -->
-      <link href="./assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-
-      <!-- Jquery Toast css -->
-      <link href="./assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
-  
-
-      <!-- icons -->
-      <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-  
 
 
 
 
 
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
+
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
 
@@ -66,18 +66,29 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+  <!-- Vendor js -->
+  <script src="./assets/js/vendor.min.js"></script>
 
-      <!-- Tost-->
-      <script src="./assets/libs/jquery-toast-plugin/jquery.toast.min.js"></script>
 
-      <!-- toastr init js-->
-      <script src="./assets/js/pages/toastr.init.js"></script>
 
-      <!-- Vendor js -->
-      <script src="./assets/js/vendor.min.js"></script>
+  <!-- Plugins js -->
+  <script src="./assets/libs/flatpickr/flatpickr.min.js"></script>
+  <!-- <script src="./assets/libs/apexcharts/apexcharts.min.js"></script> -->
 
-      <!-- App js -->
-      <script src="./assets/js/app.min.js"></script>
+  <!-- <script src="./assets/libs/selectize/js/standalone/selectize.min.js"></script> -->
 
-  </body>
+  <!-- Tost-->
+  <script src="./assets/libs/jquery-toast-plugin/jquery.toast.min.js"></script>
+
+  <!-- toastr init js-->
+  <script src="./assets/js/pages/toastr.init.js"></script>
+
+  <!-- Dashboar 1 init js -->
+  <!-- <script src="./assets/js/pages/dashboard-1.init.js"></script> -->
+
+  <!-- App js -->
+  <script src="./assets/js/app.min.js"></script>
+
+</body>
+
 </html>
