@@ -11,7 +11,6 @@ import { NotificationContainer } from 'react-notifications';
 ReactDOM.render(
   <React.StrictMode>
     <Base />
-    
   </React.StrictMode>,
   document.getElementById('root')
 );

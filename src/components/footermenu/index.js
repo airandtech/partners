@@ -24,6 +24,12 @@ const FooterMenu = ({ styles, history }) => {
       active: false,
       route: "/riders",
     },
+    {
+        icon: "fas fa-dolly",
+        text: "Orders",
+        active: false,
+        route: "/orders",
+      },
   ];
 
 

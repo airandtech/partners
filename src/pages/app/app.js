@@ -4,6 +4,7 @@ import Login from '../auth'
 import Dashboard from '../dashboard'
 import Profile from '../profile'
 import Riders from '../riders'
+import Orders from '../orders'
 import FooterMenuItems  from "../../components/footermenu";
 
 const ls = require('local-storage');
@@ -63,6 +64,7 @@ class AppBase extends Component {
             <PrivateRoute path='/dashboard' component={Dashboard} />
             <PrivateRoute path='/account' component={Profile} />
             <PrivateRoute path='/riders' component={Riders} />
+            <PrivateRoute path='/orders' component={Orders} />
           </Switch>
           {!styles.showSidebar && (
             <FooterMenuItems styles={styles} history={this.props.history} />
