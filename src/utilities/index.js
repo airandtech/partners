@@ -1,9 +1,10 @@
 import {NotificationManager} from 'react-notifications';
+import moment from 'moment';
 
 const ls = require('local-storage');
 
 export const baseUrl = () => {
-  return 'https://airandapi.azurewebsites.net/';
+  return 'https://cors-anywhere.herokuapp.com/https://airandapi.azurewebsites.net/';
 };
 
 export const payStackBaseUrl = () => {
@@ -11,7 +12,7 @@ export const payStackBaseUrl = () => {
 };
 
 export const flutterwaveBaseUrl = () => {
-  return 'https://api.flutterwave.com/';
+  return 'https://cors-anywhere.herokuapp.com/https://api.flutterwave.com/';
 };
 
 export const getToken = () => {
@@ -32,7 +33,7 @@ export const psToken = () => {
 }
 
 export const fwToken = () => {
-  return 'FLWPUBK-a29ddac56a7570b18a41073432b4abf9-X'
+  return 'FLWSECK-891e490e3196c2de0debb041ed1eb6dd-X'
 }
 
 export const processResponse = (response) => {
@@ -70,40 +71,25 @@ export const createNotification = (type) => {
   };
 };
 
+export const formatDate = (dateString) => {
+  const parsed = moment(new Date(dateString));
 
+  if (!parsed.isValid()) {
+    return dateString;
+  }
 
-// export const showToast = (type, message) => {
+  return parsed.format('Do MMM YYYY HH:mm');
+};
 
-//   let color;
+export const isActive = (dateString) => {
+  var now = moment(Date.now());
+  var before = moment(dateString);
 
-//   switch (type) {
-//     case "success":
-//       color = "#5ba035";
-//       break;
-//     case "error":
-//       color = "#bf441d";
-//       break;
-//     default:
-//       color = "#3b98b5";
-//       break;
-//   }
-
-//   const options = {
-//     position: 'top-left',
-//     style: {
-//       backgroundColor: color,
-//       color: '#FFF',
-//       fontSize: '20px',
-//       textAlign: 'center',
-//     },
-//     closeStyle: {
-//       color: 'lightcoral',
-//       fontSize: '16px',
-//     },
-//   }
-
-//   const [open] = useSnackbar(options);
-
-//   open(message);
-// };
+  var duration = moment.duration(now.diff(before));
+  var hours = Math.abs(duration.asHours());
+  if(hours < 3)
+    return true;
+  else 
+    return false;
+}
 

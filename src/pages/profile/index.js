@@ -1,9 +1,8 @@
 import { Component } from "react";
-import { baseUrl, processResponse, payStackBaseUrl, psToken, flutterwaveBaseUrl, fwToken, getToken, createNotification } from '../../utilities';
+import { baseUrl, processResponse, payStackBaseUrl, psToken, flutterwaveBaseUrl, fwToken, getToken } from '../../utilities';
 import SideBar from '../../components/sidebar'
 import TopBar from '../../components/topbar'
 import Footer from '../../components/footer'
-import Toast from '../../components/toast'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 
@@ -15,6 +14,7 @@ export default class Profile extends Component {
         this.state = {
             loading: false,
             isEdit: false,
+            isEnquiry: false,
             username: '',
             user: {},
             managers: [],
@@ -32,7 +32,8 @@ export default class Profile extends Component {
             bankCode: '',
             managerPhone: '',
             managerEmail: '',
-            managerFullName: ''
+            managerFullName: '',
+            selectedBank: 0,
         }
 
     }
@@ -56,20 +57,21 @@ export default class Profile extends Component {
             })
                 .then(processResponse)
                 .then((res) => {
-                    console.warn(`DATA==> ${JSON.stringify(res.data)}`);
                     if (res.statusCode === 200 && res.data.status) {
                         NotificationManager.success("Fetched company details", 'Success', 5000);
                         console.log(res.data)
-                        this.setState({ managers: res.data.data.managers, company: res.data.data.company })
-
-
+                        const company = res.data.data.company;
+                        console.log(company);
+                        this.setState({ managers: res.data.data.managers, company: company, accountName: company.accountName, bankName: company.bankName })
+                        this.setState({companyAddress: company.companyAddress, companyName: company.companyName, accountName: company.accountName, accountNumber: company.accountNumber})
+                        
                     } else {
                         NotificationManager.error(res.data.message, 'Failed', 5000);
                         console.log("FAILED: ", res.data.message)
                     }
                 })
                 .catch((error) => {
-                    NotificationManager.error(JSON.stringify(error), 'Failed', 5000);
+                    NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
                     console.log("FAILED :", error)
                 });
         }
@@ -92,8 +94,10 @@ export default class Profile extends Component {
             .then((res) => {
                 if (res.statusCode === 200 && res.data.status) {
                     NotificationManager.success(res.data.message, 'Success', 5000);
-                    console.log(res.data)
-                    this.setState({ bankList: res.data.data })
+                    console.log(res.data);
+                    this.setState({ bankList: res.data.data });
+                    const bankIndex = res.data.data.findIndex(x => x.name === this.state.company.bankName);
+                    this.setState({ selectedBank: bankIndex });
 
                 } else {
                     NotificationManager.error(res.data.message, 'Failed', 5000);
@@ -101,12 +105,13 @@ export default class Profile extends Component {
                 }
             })
             .catch((error) => {
-                NotificationManager.error(JSON.stringify(error), 'Failed', 5000);
+                NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
                 console.log("FAILED :", error)
             });
     }
 
     resolveAccountNumber = (account_number) => {
+        this.setState({ isEnquiry: true })
         fetch(flutterwaveBaseUrl() + 'v3/accounts/resolve', {
             method: 'post',
             headers: {
@@ -117,6 +122,7 @@ export default class Profile extends Component {
         })
             .then(processResponse)
             .then((res) => {
+                this.setState({ isEnquiry: false })
                 if (res.statusCode === 200 && res.data.status === "success") {
                     NotificationManager.success(res.data.message, 'Success', 5000);
                     console.log(res.data)
@@ -128,7 +134,8 @@ export default class Profile extends Component {
                 }
             })
             .catch((error) => {
-                NotificationManager.error(JSON.stringify(error), 'Failed', 5000);
+                this.setState({ isEnquiry: false })
+                NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
                 console.log("FAILED :", error)
             });
     }
@@ -165,18 +172,24 @@ export default class Profile extends Component {
             body: JSON.stringify({
                 company: {
                     CompanyName: this.state.companyName, CompanyAddress: this.state.companyAddress,
-                    BankName: this.state.bankName, AccountNumber: this.state.accountNumber, AccountName: "Timilehin Oloruntoba",
+                    BankName: this.state.bankName, AccountNumber: this.state.accountNumber, AccountName: this.state.accountName,
                     OfficeArea: this.state.companyAddress,
                 },
                 ridersDetails: [],
-                managerDetails: []
+                managerDetails: [],
+                user: {
+                    FirstName: this.state.firstName,
+                    LastName: this.state.lastName,
+                    Phone: this.state.phone
+                }
             }),
         })
             .then(processResponse)
             .then((res) => {
                 console.log(res.data)
+                this.setState({ loading: false })
                 if (res.statusCode === 200 && res.data.status) {
-                    this.setState({ loading: false, isEdit: false })
+                    this.setState({ isEdit: false })
                     NotificationManager.success(res.data.message, 'Success', 5000);
                     this.loadCompanyDetails()
 
@@ -184,11 +197,10 @@ export default class Profile extends Component {
                     NotificationManager.error(res.data.error, 'Failed', 5000);
                 } else {
                     NotificationManager.error(res.data.message, 'Failed', 5000);
-                    this.setState({ loading: false })
                 }
             })
             .catch((error) => {
-                NotificationManager.error(JSON.stringify(error), 'Failed', 5000);
+                NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
                 this.setState({ loading: false })
             });
     }
@@ -229,7 +241,7 @@ export default class Profile extends Component {
                 }
             })
             .catch((error) => {
-                NotificationManager.error(JSON.stringify(error), 'Failed', 5000);
+                NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
                 this.setState({ loading: false })
             });
     }
@@ -288,7 +300,7 @@ export default class Profile extends Component {
                                     <div className="col-lg-4 col-xl-4">
                                         <div className="card-box text-center">
                                             <img src="../assets/images/users/user-1.jpg" className="rounded-circle avatar-lg img-thumbnail"
-                                                alt="profile-image" />
+                                                alt="profile-avatar" />
 
                                             <h4 className="mb-0">{this.state.user.firstName} {this.state.user.lastName}</h4>
                                             <p className="text-muted">{this.state.username}</p>
@@ -355,11 +367,11 @@ export default class Profile extends Component {
                                         <div className="card-box">
 
                                             <h4 className="header-title mb-3">Manager<sub>(s)</sub></h4>
-
-                                            <button type="button" className="btn btn-success btn-xs waves-effect waves-light" data-toggle="modal" data-target="#standard-modal">
-                                                <span className="btn-label"><i className="mdi mdi-plus"></i></span>New Manager
+                                            {this.state.isSetupComplete ?
+                                                <button type="button" className="btn btn-success btn-xs waves-effect waves-light" data-toggle="modal" data-target="#standard-modal">
+                                                    <span className="btn-label"><i className="mdi mdi-plus"></i></span>New Manager
                                             </button>
-
+                                                : <></>}
 
                                             <div className="inbox-widget" data-simplebar style={{ maxHeight: 350 }}>
 
@@ -401,13 +413,13 @@ export default class Profile extends Component {
                                                                 <div className="col-md-6">
                                                                     <div className="form-group">
                                                                         <label htmlFor="firstname">First Name</label>
-                                                                        <input type="text" className="form-control" id="firstname" value={this.state.firstName} placeholder="Enter first name" disabled />
+                                                                        <input type="text" className="form-control" onChange={(e) => { this.setState({ firstName: e.target.value }) }} id="firstname" value={this.state.firstName} placeholder="Enter first name" />
                                                                     </div>
                                                                 </div>
                                                                 <div className="col-md-6">
                                                                     <div className="form-group">
                                                                         <label htmlFor="lastname">Last Name</label>
-                                                                        <input type="text" className="form-control" id="lastname" value={this.state.lastName} placeholder="Enter last name" disabled />
+                                                                        <input type="text" className="form-control" onChange={(e) => { this.setState({ lastName: e.target.value }) }} id="lastname" value={this.state.lastName} placeholder="Enter last name" />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -416,7 +428,7 @@ export default class Profile extends Component {
                                                                 <div className="col-md-6">
                                                                     <div className="form-group">
                                                                         <label htmlFor="firstname">Phone Number</label>
-                                                                        <input type="text" className="form-control" id="phone" value={this.state.phone} placeholder="Enter phone number" disabled />
+                                                                        <input type="text" className="form-control" onChange={(e) => { this.setState({ phone: e.target.value }) }} id="phone" value={this.state.phone} placeholder="Enter phone number" />
                                                                     </div>
                                                                 </div>
                                                                 <div className="col-md-6">
@@ -457,8 +469,8 @@ export default class Profile extends Component {
                                                                 <div className="col-md-4">
                                                                     <div className="form-group">
                                                                         <label htmlFor="companyname">Bank Name</label>
-                                                                        <select onChange={this.handleBankSelection} className="form-control" id="bankName">
-                                                                            <option defaultValue disabled>Choose Bank</option>
+                                                                        <select value={this.state.selectedBank} onChange={this.handleBankSelection} className="form-control" id="bankName">
+                                                                            {/* <option defaultValue disabled>Choose Bank</option> */}
                                                                             {this.state.bankList.map((item, index) =>
                                                                                 <option key={index} value={index}>{item.name}</option>
                                                                             )}
@@ -474,7 +486,10 @@ export default class Profile extends Component {
                                                                 <div className="col-md-4">
                                                                     <div className="form-group">
                                                                         <label htmlFor="cwebsite">Account Name</label>
-                                                                        <input type="text" className="form-control" id="accountName" value={this.state.company.accountName} disabled />
+                                                                        <input type="text" className="form-control" id="accountName" value={this.state.accountName} disabled />
+                                                                        {this.state.isEnquiry ?
+                                                                            <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+                                                                            : <></>}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -529,7 +544,7 @@ export default class Profile extends Component {
                 <NotificationContainer />
 
 
-                <div id="standard-modal" className="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
+                <div id="standard-modal" className="modal fade" tabIndex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">

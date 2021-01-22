@@ -3,6 +3,7 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import Login from '../auth'
 import Dashboard from '../dashboard'
 import Profile from '../profile'
+import Riders from '../riders'
 
 const ls = require('local-storage');
 
@@ -55,6 +56,7 @@ class AppBase extends Component {
             {/* <Route exact path="/dashboard" render={() => <Dashboard history={this.props.history} />}  /> */}
             <PrivateRoute path='/dashboard' component={Dashboard} />
             <PrivateRoute path='/account' component={Profile} />
+            <PrivateRoute path='/riders' component={Riders} />
           </Switch>
       </div>
     );

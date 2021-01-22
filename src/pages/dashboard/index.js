@@ -1,15 +1,68 @@
 import { Component } from "react";
-import { baseUrl, processResponse, showTopNotification } from '../../utilities';
+import { baseUrl, processResponse, getToken, formatDate, isActive } from '../../utilities';
 import SideBar from '../../components/sidebar'
 import TopBar from '../../components/topbar'
 import Footer from '../../components/footer'
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 export default class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            totalTransactionsVolume: 0,
+            totalTransactionsValue: 0.0,
+            todayTransactionsVolume: 0,
+            todayTransactionsValue: 0.0,
+            totalSuccessfulVolume: 0,
+            totalSuccessValue: 0.0,
+            todayTransactions: [],
+            totalTransactions: [],
+            riders: [],
         }
 
+    }
+
+    componentDidMount = () => {
+        this.loadDashboardStatistics();
+    }
+
+    loadDashboardStatistics = () => {
+        const token = getToken();
+        if (token) {
+            fetch(baseUrl() + 'api/company/dashboard', {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                }
+            })
+                .then(processResponse)
+                .then((res) => {
+                    if (res.statusCode === 200 && res.data.status) {
+                        NotificationManager.success("Dashboard updated", 'Success', 5000);
+                        console.log(res.data)
+                        console.log("DATA GOTTEN")
+                        const {
+                            totalTransactionsVolume, totalTransactionsValue, todayTransactionsVolume,
+                            todayTransactionsValue, totalSuccessfulVolume, totalSuccessValue,
+                            todayTransactions, totalTransactions, riders
+                        } = res.data.data;
+                        this.setState({
+                            totalTransactionsVolume, totalTransactionsValue, todayTransactionsVolume,
+                            todayTransactionsValue, totalSuccessfulVolume, totalSuccessValue,
+                            todayTransactions, totalTransactions, riders
+                        })
+
+                    } else {
+                        NotificationManager.error(res.data.message, 'Failed', 5000);
+                        console.log("FAILED: ", res.data.message)
+                    }
+                })
+                .catch((error) => {
+                    NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
+                    console.log("FAILED :", error)
+                });
+        }
     }
 
     render() {
@@ -21,7 +74,7 @@ export default class Dashboard extends Component {
                 {/* Begin page */}
                 <div id="wrapper">
 
-                    <TopBar history={this.props.history}/>
+                    <TopBar history={this.props.history} />
 
                     <SideBar history={this.props.history} />
 
@@ -76,7 +129,7 @@ export default class Dashboard extends Component {
                                                 </div>
                                                 <div className="col-6">
                                                     <div className="text-right">
-                                                        <h3 className="mt-1">$<span data-plugin="counterup">58,947</span></h3>
+                                                        <h3 className="mt-1">₦<span data-plugin="counterup">{this.state.totalSuccessValue}</span></h3>
                                                         <p className="text-muted mb-1 text-truncate">Total Revenue</p>
                                                     </div>
                                                 </div>
@@ -94,7 +147,7 @@ export default class Dashboard extends Component {
                                                 </div>
                                                 <div className="col-6">
                                                     <div className="text-right">
-                                                        <h3 className="text-dark mt-1"><span data-plugin="counterup">127</span></h3>
+                                                        <h3 className="text-dark mt-1"><span data-plugin="counterup">{this.state.todayTransactionsVolume}</span></h3>
                                                         <p className="text-muted mb-1 text-truncate">Today's Sales</p>
                                                     </div>
                                                 </div>
@@ -112,8 +165,8 @@ export default class Dashboard extends Component {
                                                 </div>
                                                 <div className="col-6">
                                                     <div className="text-right">
-                                                        <h3 className="text-dark mt-1"><span data-plugin="counterup">0.58</span>%</h3>
-                                                        <p className="text-muted mb-1 text-truncate">Conversion</p>
+                                                        <h3 className="text-dark mt-1"><span data-plugin="counterup">{this.state.todayTransactionsValue}</span></h3>
+                                                        <p className="text-muted mb-1 text-truncate">Today's Orders</p>
                                                     </div>
                                                 </div>
                                             </div> {/* end row*/}
@@ -130,17 +183,19 @@ export default class Dashboard extends Component {
                                                 </div>
                                                 <div className="col-6">
                                                     <div className="text-right">
-                                                        <h3 className="text-dark mt-1"><span data-plugin="counterup">78.41</span>k</h3>
-                                                        <p className="text-muted mb-1 text-truncate">Today's Visits</p>
+                                                        <h3 className="text-dark mt-1"><span data-plugin="counterup">{this.state.totalTransactionsVolume}</span></h3>
+                                                        <p className="text-muted mb-1 text-truncate">Total Orders</p>
                                                     </div>
                                                 </div>
                                             </div> {/* end row*/}
                                         </div> {/* end widget-rounded-circle*/}
                                     </div> {/* end col*/}
                                 </div>
+
+
                                 {/* end row*/}
 
-                                <div className="row">
+                                {/* <div className="row">
                                     <div className="col-lg-4">
                                         <div className="card-box">
                                             <div className="dropdown float-right">
@@ -148,13 +203,13 @@ export default class Dashboard extends Component {
                                                     <i className="mdi mdi-dots-vertical"></i>
                                                 </a>
                                                 <div className="dropdown-menu dropdown-menu-right">
-                                                    {/* item*/}
+                                                   
                                                     <a href="#" className="dropdown-item">Sales Report</a>
-                                                    {/* item*/}
+                                                   
                                                     <a href="#" className="dropdown-item">Export Report</a>
-                                                    {/* item*/}
+                                                   
                                                     <a href="#" className="dropdown-item">Profit</a>
-                                                    {/* item*/}
+                                                    
                                                     <a href="#" className="dropdown-item">Action</a>
                                                 </div>
                                             </div>
@@ -186,8 +241,8 @@ export default class Dashboard extends Component {
                                                 </div>
 
                                             </div>
-                                        </div> {/* end card-box */}
-                                    </div> {/* end col*/}
+                                        </div> 
+                                    </div> 
 
                                     <div className="col-lg-8">
                                         <div className="card-box pb-2">
@@ -204,10 +259,10 @@ export default class Dashboard extends Component {
                                             <div dir="ltr">
                                                 <div id="sales-analytics" className="mt-4" data-colors="#1abc9c,#4a81d4"></div>
                                             </div>
-                                        </div> {/* end card-box */}
-                                    </div> {/* end col*/}
-                                </div>
-                                {/* end row */}
+                                        </div> 
+                                    </div> 
+                                </div> */}
+
 
                                 <div className="row">
                                     <div className="col-xl-6">
@@ -217,11 +272,11 @@ export default class Dashboard extends Component {
                                                     <i className="mdi mdi-dots-vertical"></i>
                                                 </a>
                                                 <div className="dropdown-menu dropdown-menu-right">
-                                                    {/* item*/}
+
                                                     <a href="#" className="dropdown-item">Edit Report</a>
-                                                    {/* item*/}
+
                                                     <a href="#" className="dropdown-item">Export Report</a>
-                                                    {/* item*/}
+
                                                     <a href="#" className="dropdown-item">Action</a>
                                                 </div>
                                             </div>
@@ -229,155 +284,48 @@ export default class Dashboard extends Component {
                                             <h4 className="header-title mb-3">Top 5 Active Riders</h4>
 
                                             <div className="table-responsive">
+                                            
                                                 <table className="table table-borderless table-hover table-nowrap table-centered m-0">
 
                                                     <thead className="thead-light">
                                                         <tr>
                                                             <th colSpan="2">Profile</th>
-                                                            <th>Currency</th>
-                                                            <th>Balance</th>
-                                                            <th>Reserved in orders</th>
-                                                            <th>Action</th>
+                                                            <th>Phone</th>
+                                                            <th>Last Seen</th>
+                                                            <th>Status</th>
+                                                            {/* <th>Action</th> */}
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td style={{ width: 36 }}>
-                                                                <img src="../assets/images/users/user-2.jpg" alt="contact-img" title="contact-img" className="rounded-circle avatar-sm" />
-                                                            </td>
+                                                        {this.state.riders.map((item, index) =>
+                                                            <tr key={index}>
+                                                                <td style={{ width: 36 }}>
+                                                                    <img src="../assets/images/users/user-2.jpg" alt="contact-img" title="contact-img" className="rounded-circle avatar-sm" />
+                                                                </td>
 
-                                                            <td>
-                                                                <h5 className="m-0 font-weight-normal">Tomaslau</h5>
-                                                                <p className="mb-0 text-muted"><small>Member Since 2017</small></p>
-                                                            </td>
+                                                                <td>
+                                                                    <h5 className="m-0 font-weight-normal">{item.user.firstName} {item.user.lastName}</h5>
+                                                                    {/* <p className="mb-0 text-muted"><small>Member Since 2017</small></p> */}
+                                                                </td>
 
-                                                            <td>
-                                                                <i className="mdi mdi-currency-btc text-primary"></i> BTC
-                                                    </td>
+                                                                <td>
+                                                                    <i className="mdi mdi-phone text-primary"></i> {item.user.phone}
+                                                                </td>
 
-                                                            <td>
-                                                                0.00816117 BTC
-                                                    </td>
+                                                                <td>
+                                                                    {formatDate(item.lastModified)}
+                                                                </td>
 
-                                                            <td>
-                                                                0.00097036 BTC
-                                                    </td>
+                                                                <td>
+                                                                    <td>{isActive(item.lastModified) ? <span className="badge label-table badge-success">Active</span> : <span className="badge label-table badge-danger">InActive</span>}</td>
+                                                                </td>
 
-                                                            <td>
-                                                                <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-plus"></i></a>
-                                                                <a href="#" className="btn btn-xs btn-danger"><i className="mdi mdi-minus"></i></a>
-                                                            </td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td style={{ width: 36 }}>
-                                                                <img src="../assets/images/users/user-3.jpg" alt="contact-img" title="contact-img" className="rounded-circle avatar-sm" />
-                                                            </td>
-
-                                                            <td>
-                                                                <h5 className="m-0 font-weight-normal">Erwin E. Brown</h5>
-                                                                <p className="mb-0 text-muted"><small>Member Since 2017</small></p>
-                                                            </td>
-
-                                                            <td>
-                                                                <i className="mdi mdi-currency-eth text-primary"></i> ETH
-                                                    </td>
-
-                                                            <td>
-                                                                3.16117008 ETH
-                                                    </td>
-
-                                                            <td>
-                                                                1.70360009 ETH
-                                                    </td>
-
-                                                            <td>
-                                                                <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-plus"></i></a>
-                                                                <a href="#" className="btn btn-xs btn-danger"><i className="mdi mdi-minus"></i></a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style={{ width: "36px" }}>
-                                                                <img src="../assets/images/users/user-4.jpg" alt="contact-img" title="contact-img" className="rounded-circle avatar-sm" />
-                                                            </td>
-
-                                                            <td>
-                                                                <h5 className="m-0 font-weight-normal">Margeret V. Ligon</h5>
-                                                                <p className="mb-0 text-muted"><small>Member Since 2017</small></p>
-                                                            </td>
-
-                                                            <td>
-                                                                <i className="mdi mdi-currency-eur text-primary"></i> EUR
-                                                    </td>
-
-                                                            <td>
-                                                                25.08 EUR
-                                                    </td>
-
-                                                            <td>
-                                                                12.58 EUR
-                                                    </td>
-
-                                                            <td>
-                                                                <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-plus"></i></a>
-                                                                <a href="#" className="btn btn-xs btn-danger"><i className="mdi mdi-minus"></i></a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style={{ width: "36px" }}>
-                                                                <img src="../assets/images/users/user-5.jpg" alt="contact-img" title="contact-img" className="rounded-circle avatar-sm" />
-                                                            </td>
-
-                                                            <td>
-                                                                <h5 className="m-0 font-weight-normal">Jose D. Delacruz</h5>
-                                                                <p className="mb-0 text-muted"><small>Member Since 2017</small></p>
-                                                            </td>
-
-                                                            <td>
-                                                                <i className="mdi mdi-currency-cny text-primary"></i> CNY
-                                                    </td>
-
-                                                            <td>
-                                                                82.00 CNY
-                                                    </td>
-
-                                                            <td>
-                                                                30.83 CNY
-                                                    </td>
-
-                                                            <td>
-                                                                <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-plus"></i></a>
-                                                                <a href="#" className="btn btn-xs btn-danger"><i className="mdi mdi-minus"></i></a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style={{ width: 36 }}>
-                                                                <img src="../assets/images/users/user-6.jpg" alt="contact-img" title="contact-img" className="rounded-circle avatar-sm" />
-                                                            </td>
-
-                                                            <td>
-                                                                <h5 className="m-0 font-weight-normal">Luke J. Sain</h5>
-                                                                <p className="mb-0 text-muted"><small>Member Since 2017</small></p>
-                                                            </td>
-
-                                                            <td>
-                                                                <i className="mdi mdi-currency-btc text-primary"></i> BTC
-                                                    </td>
-
-                                                            <td>
-                                                                2.00816117 BTC
-                                                    </td>
-
-                                                            <td>
-                                                                1.00097036 BTC
-                                                    </td>
-
-                                                            <td>
-                                                                <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-plus"></i></a>
-                                                                <a href="#" className="btn btn-xs btn-danger"><i className="mdi mdi-minus"></i></a>
-                                                            </td>
-                                                        </tr>
-
+                                                                {/* <td>
+                                                                    <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-plus"></i></a>
+                                                                    <a href="#" className="btn btn-xs btn-danger"><i className="mdi mdi-minus"></i></a>
+                                                                </td> */}
+                                                            </tr>
+                                                        )}
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -407,146 +355,41 @@ export default class Dashboard extends Component {
 
                                                     <thead className="thead-light">
                                                         <tr>
-                                                            <th>Marketplaces</th>
+                                                            <th>Customer</th>
                                                             <th>Date</th>
-                                                            <th>Payouts</th>
+                                                            <th>Amount</th>
                                                             <th>Status</th>
-                                                            <th>Action</th>
+                                                            <th>Payment Status</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+                                                        {this.state.todayTransactions.map((index, item)=> 
+                                                            
                                                         <tr>
                                                             <td>
-                                                                <h5 className="m-0 font-weight-normal">Themes Market</h5>
+                                                                <h5 className="m-0 font-weight-normal">{item.requestorIdentifier}</h5>
                                                             </td>
 
                                                             <td>
-                                                                Oct 15, 2018
+                                                                {formatDate(item.lastModified)}
                                                     </td>
 
                                                             <td>
-                                                                $5848.68
+                                                            ₦{item.cost}
                                                     </td>
 
                                                             <td>
-                                                                <span className="badge bg-soft-warning text-warning">Upcoming</span>
+
+                                                            {item.status === "01" ? <span className="badge bg-soft-warning text-warning">Pending</span> : item.status === "00" ? <span className="badge bg-soft-success text-success">Completed</span> : item.status === "02" ? <span className="badge bg-soft-info text-info">Created</span> : <span className="badge bg-soft-info text-info">Created</span>}
                                                             </td>
 
                                                             <td>
+                                                                {item.paymentStatus === 0 ? <span className="badge bg-soft-danger text-danger">UnPaid</span> : <span className="badge bg-soft-success text-success">Paid</span>}
                                                                 <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-pencil"></i></a>
                                                             </td>
                                                         </tr>
 
-                                                        <tr>
-                                                            <td>
-                                                                <h5 className="m-0 font-weight-normal">Freelance</h5>
-                                                            </td>
-
-                                                            <td>
-                                                                Oct 12, 2018
-                                                    </td>
-
-                                                            <td>
-                                                                $1247.25
-                                                    </td>
-
-                                                            <td>
-                                                                <span className="badge bg-soft-success text-success">Paid</span>
-                                                            </td>
-
-                                                            <td>
-                                                                <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-pencil"></i></a>
-                                                            </td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td>
-                                                                <h5 className="m-0 font-weight-normal">Share Holding</h5>
-                                                            </td>
-
-                                                            <td>
-                                                                Oct 10, 2018
-                                                    </td>
-
-                                                            <td>
-                                                                $815.89
-                                                    </td>
-
-                                                            <td>
-                                                                <span className="badge bg-soft-success text-success">Paid</span>
-                                                            </td>
-
-                                                            <td>
-                                                                <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-pencil"></i></a>
-                                                            </td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td>
-                                                                <h5 className="m-0 font-weight-normal">Envato's Affiliates</h5>
-                                                            </td>
-
-                                                            <td>
-                                                                Oct 03, 2018
-                                                    </td>
-
-                                                            <td>
-                                                                $248.75
-                                                    </td>
-
-                                                            <td>
-                                                                <span className="badge bg-soft-danger text-danger">Overdue</span>
-                                                            </td>
-
-                                                            <td>
-                                                                <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-pencil"></i></a>
-                                                            </td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td>
-                                                                <h5 className="m-0 font-weight-normal">Marketing Revenue</h5>
-                                                            </td>
-
-                                                            <td>
-                                                                Sep 21, 2018
-                                                    </td>
-
-                                                            <td>
-                                                                $978.21
-                                                    </td>
-
-                                                            <td>
-                                                                <span className="badge bg-soft-warning text-warning">Upcoming</span>
-                                                            </td>
-
-                                                            <td>
-                                                                <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-pencil"></i></a>
-                                                            </td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td>
-                                                                <h5 className="m-0 font-weight-normal">Advertise Revenue</h5>
-                                                            </td>
-
-                                                            <td>
-                                                                Sep 15, 2018
-                                                    </td>
-
-                                                            <td>
-                                                                $358.10
-                                                    </td>
-
-                                                            <td>
-                                                                <span className="badge bg-soft-success text-success">Paid</span>
-                                                            </td>
-
-                                                            <td>
-                                                                <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-pencil"></i></a>
-                                                            </td>
-                                                        </tr>
-
+                                                        )}
                                                     </tbody>
                                                 </table>
                                             </div> {/* end .table-responsive*/}
@@ -561,7 +404,7 @@ export default class Dashboard extends Component {
 
                         {/* Footer Start */}
 
-                         <Footer />
+                        <Footer />
 
                         {/* end Footer */}
 
@@ -577,7 +420,7 @@ export default class Dashboard extends Component {
 
                 {/* Right bar overlay*/}
                 <div className="rightbar-overlay"></div>
-
+                <NotificationContainer />
             </div>
         )
     }

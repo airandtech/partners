@@ -71,7 +71,7 @@ export default class SideBar extends Component {
                                 <li className="menu-title">Navigation</li>
 
                                 <li>
-                                    <a href="#sidebarDashboards" data-toggle="collapse">
+                                    <a href="/dashboard">
                                         {/* <i data-feather="airplay"></i> */}
                                         <i className="fe-airplay"></i>
                                         {/* <span className="badge badge-success badge-pill float-right">4</span> */}
@@ -92,7 +92,7 @@ export default class SideBar extends Component {
                                 </li>
 
                                 <li>
-                                    <a href="/">
+                                    <a href="/riders">
                                         <i className="fas fa-bicycle"></i>
                                         <span> Riders </span>
                                     </a>
