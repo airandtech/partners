@@ -1,5 +1,4 @@
 import React from "react";
-import * as images from '../../images';
 
 const FooterMenu = ({ styles, history }) => {
 
