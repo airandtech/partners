@@ -46,12 +46,12 @@ export default class Riders extends Component {
 
                     } else {
                         NotificationManager.error(res.data.message, 'Failed', 5000);
-                        console.log("FAILED: ", res.data.message)
+                        //console.log("FAILED: ", res.data.message)
                     }
                 })
                 .catch((error) => {
                     NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
-                    console.log("FAILED :", error)
+                    //console.log("FAILED :", error)
                 });
         }
     }
@@ -76,7 +76,7 @@ export default class Riders extends Component {
         })
         .then(processResponse)
         .then((res) => {
-            console.log(res.data)
+            //console.log(res.data)
             if (res.statusCode === 200 && res.data.status) {
                 this.setState({ loading: false, isEdit: false })
                 NotificationManager.success("Rider added", 'Success', 5000);

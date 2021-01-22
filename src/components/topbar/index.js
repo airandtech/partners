@@ -279,11 +279,11 @@ class TopBar extends Component {
                         </div>
 
                         <ul className="list-unstyled topnav-menu topnav-menu-left m-0">
-                            <li>
+                            {/* <li>
                                 <button className="button-menu-mobile waves-effect waves-light">
                                     <i className="fe-menu"></i>
                                 </button>
-                            </li>
+                            </li> */}
 
                             <li>
                                 {/* Mobile menu toggle (Horizontal Layout)*/}

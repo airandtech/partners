@@ -47,7 +47,6 @@ export const processResponse = (response) => {
 
 
 export const createNotification = (type) => {
-  console.log("CREATE NOTIFICATION")
   return () => {
     switch (type) {
       case 'info':
