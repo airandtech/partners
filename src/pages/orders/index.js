@@ -8,14 +8,20 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 
 const ls = require('local-storage');
 
-export default class Riders extends Component {
+export default class Orders extends Component {
     constructor(props) {
         super(props);
         this.state = {
             loading: false,
+            totalTransactionsVolume: 0,
+            totalTransactionsValue: 0.0,
+            todayTransactionsVolume: 0,
+            todayTransactionsValue: 0.0,
+            totalSuccessfulVolume: 0,
+            totalSuccessValue: 0.0,
+            todayTransactions: [],
+            totalTransactions: [],
             riders: [],
-            riderFullName: '',
-            riderPhone: ''
         }
 
     }
@@ -24,13 +30,13 @@ export default class Riders extends Component {
         let username = ls.get('username');
         let isSetupComplete = ls.get('isSetupComplete');
         this.setState({ username, isSetupComplete })
-        this.loadCompanyDetails()
+        this.loadDashboardStatistics()
     }
 
-    loadCompanyDetails = () => {
+    loadDashboardStatistics = () => {
         const token = getToken();
         if (token) {
-            fetch(baseUrl() + 'api/company/user', {
+            fetch(baseUrl() + 'api/company/dashboard', {
                 method: 'get',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,9 +46,19 @@ export default class Riders extends Component {
                 .then(processResponse)
                 .then((res) => {
                     if (res.statusCode === 200 && res.data.status) {
-                        NotificationManager.success("Riders retrieved", 'Success', 5000);
-                        const riders = res.data.data.riders;
-                        this.setState({ riders: res.data.data.riders })
+                        NotificationManager.success("Dashboard updated", 'Success', 5000);
+                        //console.log(res.data)
+                        //console.log("DATA GOTTEN")
+                        const {
+                            totalTransactionsVolume, totalTransactionsValue, todayTransactionsVolume,
+                            todayTransactionsValue, totalSuccessfulVolume, totalSuccessValue,
+                            todayTransactions, totalTransactions, riders
+                        } = res.data.data;
+                        this.setState({
+                            totalTransactionsVolume, totalTransactionsValue, todayTransactionsVolume,
+                            todayTransactionsValue, totalSuccessfulVolume, totalSuccessValue,
+                            todayTransactions, totalTransactions, riders
+                        })
 
                     } else {
                         NotificationManager.error(res.data.message, 'Failed', 5000);
@@ -54,46 +70,6 @@ export default class Riders extends Component {
                     //console.log("FAILED :", error)
                 });
         }
-    }
-
-    handleRiderSubmit = () => {
-        this.setState({loading: true})
-        const token = getToken();
-        fetch(baseUrl() + 'api/company/riders', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token,
-            },
-            body: JSON.stringify({
-                ridersDetails: [
-                    {
-                        Name: this.state.riderFullName,
-                        Phone: this.state.riderPhone
-                    }
-                ]
-            }),
-        })
-        .then(processResponse)
-        .then((res) => {
-            //console.log(res.data)
-            if (res.statusCode === 200 && res.data.status) {
-                this.setState({ loading: false, isEdit: false })
-                NotificationManager.success("Rider added", 'Success', 5000);
-                this.loadCompanyDetails()
-
-            } else if (res.statusCode === 400) {
-                this.setState({ loading: false })
-                NotificationManager.error(res.data.error, 'Failed', 5000);
-            } else {
-                NotificationManager.error(res.data.message, 'Failed', 5000);
-                this.setState({ loading: false })
-            }
-        })
-        .catch((error) => {
-            NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
-            this.setState({ loading: false })
-        });
     }
 
     render() {
@@ -127,10 +103,10 @@ export default class Riders extends Component {
                                                 <ol className="breadcrumb m-0">
                                                     <li className="breadcrumb-item"><a href="/dashboard">Airand</a></li>
                                                     <li className="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-                                                    <li className="breadcrumb-item active">Riders</li>
+                                                    <li className="breadcrumb-item active">Orders</li>
                                                 </ol>
                                             </div>
-                                            <h4 className="page-title">Riders</h4>
+                                            <h4 className="page-title">Orders</h4>
                                         </div>
 
                                         {!this.state.isSetupComplete ?
@@ -148,7 +124,7 @@ export default class Riders extends Component {
                                 <div className="row">
                                     <div className="col-sm-12">
                                         <div className="card-box">
-                                            <h4 className="header-title">List of Riders</h4>
+                                            <h4 className="header-title">Transactions</h4>
                                             {/* <p className="sub-header">
                                         Add or remove rows from your FooTable.
                                     </p> */}
@@ -157,39 +133,57 @@ export default class Riders extends Component {
                                                 <div className="row">
                                                     <div className="col-12 text-sm-center form-inline">
                                                         <div className="form-group mr-2">
-                                                            <button id="demo-btn-addrow" className="btn btn-primary" data-toggle="modal" data-target="#standard-modal" type="button"><i className="mdi mdi-plus-circle mr-2"></i> Add New Rider</button>
+                                                            {/* <button id="demo-btn-addrow" className="btn btn-primary" data-toggle="modal" data-target="#standard-modal" type="button"><i className="mdi mdi-plus-circle mr-2"></i> Add New Rider</button> */}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            {this.state.riders.length > 0 ? 
-                                            <table id="datatable-buttons" className="table table-striped dt-responsive nowrap w-100">
-                                                <thead>
-                                                    <tr>
-                                                        <th>SN</th>
-                                                        <th>Name</th>
-                                                        <th>Phone</th>
-                                                        <th>Last Seen</th>
-                                                        <th>Status</th>
-                                                    </tr>
-                                                </thead>
-
-
-                                                <tbody>
-                                                    {this.state.riders.map((item, index) => 
-                                                        <tr key={index}>
-                                                            <td>{index+1}</td>
-                                                            <td>{item.user.firstName} {item.user.lastName}</td>
-                                                            <td>{item.user.phone}</td>
-                                                            <td>{formatDate(item.lastModified)}</td>
-                                                            <td>{isActive(item.lastModified) ? <span className="badge label-table badge-success">Active</span> : <span className="badge label-table badge-danger">InActive</span>}</td>
+                                            
+                                                <table id="datatable-buttons" className="table table-striped dt-responsive nowrap w-100">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Customer</th>
+                                                            <th>Date</th>
+                                                            <th>Amount</th>
+                                                            <th>Status</th>
+                                                            <th>Payment Status</th>
                                                         </tr>
-                                                    )}
+                                                    </thead>
 
-                                                </tbody>
-                                            </table>
-                                            : <></>}
+
+                                                    <tbody>
+                                                        {this.state.todayTransactions.map((index, item) =>
+
+                                                            <tr>
+                                                                <td>
+                                                                    <h5 className="m-0 font-weight-normal">{item.requestorIdentifier}</h5>
+                                                                </td>
+
+                                                                <td>
+                                                                    {formatDate(item.lastModified)}
+                                                                </td>
+
+                                                                <td>
+                                                                    ₦{item.cost}
+                                                                </td>
+
+                                                                <td>
+
+                                                                    {item.status === "01" ? <span className="badge bg-soft-warning text-warning">Pending</span> : item.status === "00" ? <span className="badge bg-soft-success text-success">Completed</span> : item.status === "02" ? <span className="badge bg-soft-info text-info">Created</span> : <span className="badge bg-soft-info text-info">Created</span>}
+                                                                </td>
+
+                                                                <td>
+                                                                    {item.paymentStatus === 0 ? <span className="badge bg-soft-danger text-danger">UnPaid</span> : <span className="badge bg-soft-success text-success">Paid</span>}
+                                                                    <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-pencil"></i></a>
+                                                                </td>
+                                                            </tr>
+
+                                                        )}
+
+                                                    </tbody>
+                                                </table>
+                                                
                                         </div>
                                     </div>
                                 </div>

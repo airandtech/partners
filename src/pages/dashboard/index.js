@@ -40,8 +40,8 @@ export default class Dashboard extends Component {
                 .then((res) => {
                     if (res.statusCode === 200 && res.data.status) {
                         NotificationManager.success("Dashboard updated", 'Success', 5000);
-                        console.log(res.data)
-                        console.log("DATA GOTTEN")
+                        //console.log(res.data)
+                        //console.log("DATA GOTTEN")
                         const {
                             totalTransactionsVolume, totalTransactionsValue, todayTransactionsVolume,
                             todayTransactionsValue, totalSuccessfulVolume, totalSuccessValue,
@@ -55,12 +55,12 @@ export default class Dashboard extends Component {
 
                     } else {
                         NotificationManager.error(res.data.message, 'Failed', 5000);
-                        console.log("FAILED: ", res.data.message)
+                        //console.log("FAILED: ", res.data.message)
                     }
                 })
                 .catch((error) => {
                     NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
-                    console.log("FAILED :", error)
+                    //console.log("FAILED :", error)
                 });
         }
     }

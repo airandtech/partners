@@ -4,6 +4,8 @@ import Login from '../auth'
 import Dashboard from '../dashboard'
 import Profile from '../profile'
 import Riders from '../riders'
+import Orders from '../orders'
+import FooterMenuItems  from "../../components/footermenu";
 
 const ls = require('local-storage');
 
@@ -19,16 +21,21 @@ class AppBase extends Component {
     //this.updateDimensions = this.updateDimensions.bind(this);
   }
 
-  componentDidMount = () => {
-    // let sessionToken = sessionStorage.getItem('token');
-    // let localToken = ls.get('token');
-    // if(sessionToken || localToken){
-    //     this.props.history.push('/dashboard')
-    // }
+  componentDidMount() {
+    this.updateDimensions();
+    window.addEventListener("resize", this.updateDimensions);
   }
 
   componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
   }
+
+  updateDimensions = () => {
+    let windowWidth = typeof window !== "undefined" ? window.innerWidth : 0;
+    let windowHeight = typeof window !== "undefined" ? window.innerHeight : 0;
+
+    this.setState({ windowWidth, windowHeight });
+  };
 
   render() {
     const { windowWidth } = this.state;
@@ -57,7 +64,11 @@ class AppBase extends Component {
             <PrivateRoute path='/dashboard' component={Dashboard} />
             <PrivateRoute path='/account' component={Profile} />
             <PrivateRoute path='/riders' component={Riders} />
+            <PrivateRoute path='/orders' component={Orders} />
           </Switch>
+          {!styles.showSidebar && (
+            <FooterMenuItems styles={styles} history={this.props.history} />
+          )}
       </div>
     );
   }

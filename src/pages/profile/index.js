@@ -59,20 +59,20 @@ export default class Profile extends Component {
                 .then((res) => {
                     if (res.statusCode === 200 && res.data.status) {
                         NotificationManager.success("Fetched company details", 'Success', 5000);
-                        console.log(res.data)
+                        //console.log(res.data)
                         const company = res.data.data.company;
-                        console.log(company);
+                        //console.log(company);
                         this.setState({ managers: res.data.data.managers, company: company, accountName: company.accountName, bankName: company.bankName })
                         this.setState({companyAddress: company.companyAddress, companyName: company.companyName, accountName: company.accountName, accountNumber: company.accountNumber})
                         
                     } else {
                         NotificationManager.error(res.data.message, 'Failed', 5000);
-                        console.log("FAILED: ", res.data.message)
+                        //console.log("FAILED: ", res.data.message)
                     }
                 })
                 .catch((error) => {
                     NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
-                    console.log("FAILED :", error)
+                    //console.log("FAILED :", error)
                 });
         }
     }
@@ -94,19 +94,19 @@ export default class Profile extends Component {
             .then((res) => {
                 if (res.statusCode === 200 && res.data.status) {
                     NotificationManager.success(res.data.message, 'Success', 5000);
-                    console.log(res.data);
+                    //console.log(res.data);
                     this.setState({ bankList: res.data.data });
                     const bankIndex = res.data.data.findIndex(x => x.name === this.state.company.bankName);
                     this.setState({ selectedBank: bankIndex });
 
                 } else {
                     NotificationManager.error(res.data.message, 'Failed', 5000);
-                    console.log("FAILED: ", res.data.message)
+                    //console.log("FAILED: ", res.data.message)
                 }
             })
             .catch((error) => {
                 NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
-                console.log("FAILED :", error)
+                //console.log("FAILED :", error)
             });
     }
 
@@ -125,26 +125,26 @@ export default class Profile extends Component {
                 this.setState({ isEnquiry: false })
                 if (res.statusCode === 200 && res.data.status === "success") {
                     NotificationManager.success(res.data.message, 'Success', 5000);
-                    console.log(res.data)
+                    //console.log(res.data)
                     this.setState({ accountName: res.data.data.account_name })
 
                 } else {
                     NotificationManager.error(res.data.message, 'Failed', 5000);
-                    console.log("FAILED: ", res.data.message)
+                    //console.log("FAILED: ", res.data.message)
                 }
             })
             .catch((error) => {
                 this.setState({ isEnquiry: false })
                 NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
-                console.log("FAILED :", error)
+                //console.log("FAILED :", error)
             });
     }
 
     handleAccountNumber = (e) => {
-        console.log("INPUT: ", e.target.value)
+        //console.log("INPUT: ", e.target.value)
         this.setState({ accountNumber: e.target.value })
         if (e.target.value.length === 10) {
-            console.log("ACCOUNT NUMBER IS 10")
+            //console.log("ACCOUNT NUMBER IS 10")
             setTimeout(() => {
                 this.resolveAccountNumber(e.target.value)
             }, 1000);
@@ -156,7 +156,7 @@ export default class Profile extends Component {
         const index = e.target.value;
         const name = this.state.bankList[index].name;
         const code = this.state.bankList[index].code;
-        // console.log("CODE: "+ code + " NAME: "+ name)
+        // //console.log("CODE: "+ code + " NAME: "+ name)
         this.setState({ bankName: name, bankCode: code })
     }
 
@@ -186,7 +186,7 @@ export default class Profile extends Component {
         })
             .then(processResponse)
             .then((res) => {
-                console.log(res.data)
+                //console.log(res.data)
                 this.setState({ loading: false })
                 if (res.statusCode === 200 && res.data.status) {
                     this.setState({ isEdit: false })
@@ -226,7 +226,7 @@ export default class Profile extends Component {
         })
             .then(processResponse)
             .then((res) => {
-                console.log(res.data)
+                //console.log(res.data)
                 if (res.statusCode === 200 && res.data.status) {
                     this.setState({ loading: false, isEdit: false })
                     NotificationManager.success("Dispatch Manager added", 'Success', 5000);
