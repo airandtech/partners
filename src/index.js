@@ -1,12 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Base from './pages/app/Base';
+import '../node_modules/react-notifications/lib/notifications.css';
+import { NotificationContainer } from 'react-notifications';
+
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Base />
+    
   </React.StrictMode>,
   document.getElementById('root')
 );
