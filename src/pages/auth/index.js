@@ -200,11 +200,11 @@ export default class Login extends Component{
                                         </div> */}
                                         <div className="form-group">
                                             <label htmlFor="emailaddress">Email address</label>
-                                            <input className="form-control" type="email" id="emailaddress" required placeholder="Enter your company email" />
+                                            <input className="form-control" onChange={(e)=> this.setState({username: e.target.value})} type="email" id="emailaddress" required placeholder="Enter your company email" />
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="password">Password</label>
-                                            <input className="form-control" type="password" required id="password" placeholder="Enter your password" />
+                                            <input className="form-control" onChange={(e)=> this.setState({password: e.target.value})} type="password" required id="password" placeholder="Enter your password" />
                                         </div>
                                         <div className="form-group">
                                             <div className="custom-control custom-checkbox">
