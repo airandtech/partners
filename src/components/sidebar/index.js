@@ -27,7 +27,7 @@ export default class SideBar extends Component {
 
                         {/* User box */}
                         <div className="user-box text-center">
-                            <img src="../assets/images/users/user-1.jpg" alt="user-img" title="Mat Helme"
+                            <img src="../assets/images/users/default-avatar.jpg" alt="user-img" title="Mat Helme"
                                 className="rounded-circle avatar-md" />
                             <div className="dropdown">
                                 <a href="#" className="text-dark dropdown-toggle h5 mt-2 mb-1 d-block"
