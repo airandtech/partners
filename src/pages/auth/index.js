@@ -1,4 +1,6 @@
 import { Component } from "react";
+import PrivacyPolicy from "../../components/privacy-policy";
+import ServiceTerms from "../../components/service-terms";
 import { baseUrl, processResponse, showTopNotification } from '../../utilities';
 const ls = require('local-storage');
 export default class Login extends Component {
@@ -245,6 +247,8 @@ export default class Login extends Component {
                                 </div>
 
                                 <footer className="footer footer-alt">
+                                    <a data-toggle="modal" data-target="#privacy-policy" href="#" className="mr-2 mb-2">Privacy Policy</a>
+                                    <a data-toggle="modal" data-target="#service-terms" href="#">Terms of Service</a>
                                     <p className="text-muted">2021 - <script>document.write(new Date().getFullYear())</script> &copy; Admin Portal by <a href="#" className="text-muted">Airand Tech</a> </p>
                                 </footer>
 
@@ -267,6 +271,26 @@ export default class Login extends Component {
                     {/* end Auth fluid right content */}
                 </div>
                 {/* end auth-fluid*/}
+
+
+
+
+
+                {/* Privacy Policy */}
+                <div id="privacy-policy" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
+                    <PrivacyPolicy/>
+                </div>
+
+
+
+                {/* Terms of Service */}
+                <div id="service-terms" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
+                    <ServiceTerms/>
+                </div>
+
+
+
+
 
             </div>
         )
