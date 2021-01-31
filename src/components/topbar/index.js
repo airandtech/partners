@@ -117,7 +117,7 @@ class TopBar extends Component {
                             <li className="dropdown notification-list topbar-dropdown">
                                 <a className="nav-link dropdown-toggle waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                                     <i style={{color: "#000"}} className="fe-bell noti-icon"></i>
-                                    <span className="badge badge-danger rounded-circle noti-icon-badge">9</span>
+                                    {/* <span className="badge badge-danger rounded-circle noti-icon-badge">9</span> */}
                                 </a>
                                 <div className="dropdown-menu dropdown-menu-right dropdown-lg">
 

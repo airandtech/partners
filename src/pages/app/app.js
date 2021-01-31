@@ -6,6 +6,7 @@ import Profile from '../profile'
 import Riders from '../riders'
 import Orders from '../orders'
 import FooterMenuItems  from "../../components/footermenu";
+import OrderDetails from '../order-details'
 
 const ls = require('local-storage');
 
@@ -59,12 +60,14 @@ class AppBase extends Component {
           <Switch>
             <Route exact path="/auth" render={() => <Login history={this.props.history} />}  />
             <Route exact path="/home" render={() => <Dashboard history={this.props.history} />}  />
+            
             {/* <Route exact path="/account" render={() => <Profile history={this.props.history} />}  /> */}
             {/* <Route exact path="/dashboard" render={() => <Dashboard history={this.props.history} />}  /> */}
             <PrivateRoute path='/dashboard' component={Dashboard} />
             <PrivateRoute path='/account' component={Profile} />
             <PrivateRoute path='/riders' component={Riders} />
             <PrivateRoute path='/orders' component={Orders} />
+            <PrivateRoute exact path="/orderDetails" component={OrderDetails}  />
           </Switch>
           {!styles.showSidebar && (
             <FooterMenuItems styles={styles} history={this.props.history} />
