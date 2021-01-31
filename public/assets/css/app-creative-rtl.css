@@ -2115,7 +2115,7 @@ body.authentication-bg-pattern {
   min-height: 100vh;
   flex-direction: row;
   align-items: stretch;
-  background: url("../images/bg-auth.jpg") center;
+  background: url("../images/bg-image.jpg") center;
   background-size: cover; }
   .auth-fluid .auth-fluid-form-box {
     max-width: 480px;
