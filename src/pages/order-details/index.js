@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { baseUrl, processResponse, getToken, formatDate, isActive } from '../../utilities';
+import { baseUrl, processResponse, getToken, formatDate, formatMoney } from '../../utilities';
 import SideBar from '../../components/sidebar'
 import TopBar from '../../components/topbar'
 import Footer from '../../components/footer'
@@ -223,7 +223,7 @@ export default class OrderDetails extends Component {
                                                                             <p class="mb-1"><b>Phone:</b> {item.delivery.phone}</p>
                                                                             <p class="mb-1"><b>Phone:</b> {item.delivery.email}</p>
                                                                             <p class="mb-1"><b>Item Description:</b> {item.delivery.description}</p>
-                                                                            <p class="mb-0"><b>Amount:</b> ₦ {item.cost}</p>
+                                                                            <p class="mb-0"><b>Amount:</b> ₦ {formatMoney(item.cost)}</p>
                                                                             {/* <p class="mb-0">Your dispatcher is about {item.duration} ({item.distance}) from the location</p> */}
                                                                         </div>
                                                                     </div>
@@ -258,7 +258,7 @@ export default class OrderDetails extends Component {
                                                     <div class="col-md-4">
                                                         <div class="mb-4">
                                                             <h5>Total Amount</h5>
-                                                            <p>₦ {this.state.totalCost}</p>
+                                                            <p>₦ {formatMoney(this.state.totalCost)}</p>
                                                         </div>
                                                     </div>
                                                 </div>
