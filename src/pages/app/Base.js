@@ -13,12 +13,12 @@ const Base = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route path="/" component={AppBase} />
-        <Route exact path="/" component={App} />
+        <Route exact path="/" component={AppBase} />
         <Route exact path="/auth" component={AppBase} />
         <Route exact path="/home" component={AppBase} />
         <Route exact path="/account" component={AppBase} />
         <Route exact path="/riders" component={AppBase} />
+        <Route exact path="/orderDetails" component={AppBase} />
         <PrivateRoute authed={isAuth} path='/dashboard' component={AppBase} />
       </Switch>
     </Router>

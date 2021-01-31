@@ -30,18 +30,18 @@ class TopBar extends Component {
         return (
             <>
                 {/* Topbar Start */}
-                <div className="navbar-custom">
+                <div style={{backgroundColor: "#F3F3F3"}} className="navbar-custom">
                     <div className="container-fluid">
                         <ul className="list-unstyled topnav-menu float-right mb-0">
 
                             <li className="d-none d-lg-block">
                                 <form className="app-search">
-                                    <div className="app-search-box dropdown">
+                                    <div  className="app-search-box dropdown">
                                         <div className="input-group">
-                                            <input type="search" className="form-control" placeholder="Search..." id="top-search" />
+                                            <input style={{backgroundColor: "#FFF", color: "#000", }} type="search" className="form-control" placeholder="Search..." id="top-search" />
                                             <div className="input-group-append">
-                                                <button className="btn" type="submit">
-                                                    <i className="fe-search"></i>
+                                                <button style={{backgroundColor: "#FFF"}} className="btn" type="submit">
+                                                    <i style={{color: "#000"}} className="fe-search"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -116,8 +116,8 @@ class TopBar extends Component {
 
                             <li className="dropdown notification-list topbar-dropdown">
                                 <a className="nav-link dropdown-toggle waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                                    <i className="fe-bell noti-icon"></i>
-                                    <span className="badge badge-danger rounded-circle noti-icon-badge">9</span>
+                                    <i style={{color: "#000"}} className="fe-bell noti-icon"></i>
+                                    {/* <span className="badge badge-danger rounded-circle noti-icon-badge">9</span> */}
                                 </a>
                                 <div className="dropdown-menu dropdown-menu-right dropdown-lg">
 
@@ -137,7 +137,7 @@ class TopBar extends Component {
                                         {/* item*/}
                                         <a href="#" className="dropdown-item notify-item active">
                                             <div className="notify-icon">
-                                                <img src="../assets/images/users/user-1.jpg" className="img-fluid rounded-circle" alt="" /> </div>
+                                                <img src="../assets/images/users/default-avatar.jpg" className="img-fluid rounded-circle" alt="" /> </div>
                                             <p className="notify-details">Welcome !!!</p>
                                             <p className="text-muted mb-0 user-msg">
                                                 <small>Hi, welcome to Airand admin portal</small>
@@ -206,8 +206,8 @@ class TopBar extends Component {
                             </li>
 
                             <li className="dropdown notification-list topbar-dropdown">
-                                <a className="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                                    <img src="../assets/images/users/user-1.jpg" alt="user-image" className="rounded-circle" />
+                                <a style={{color: "#000"}} className="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                                    <img src="../assets/images/users/default-avatar.jpg" alt="user-image" className="rounded-circle" />
                                     <span className="pro-user-name ml-1">
                                         {this.state.username} <i className="mdi mdi-chevron-down"></i>
                                     </span>
@@ -259,7 +259,7 @@ class TopBar extends Component {
                         <div className="logo-box">
                             <a href="/home" className="logo logo-dark text-center">
                                 <span className="logo-sm">
-                                    <img src="../assets/images/airand_logo.png" alt="" height="22" />
+                                    <img src="../assets/images/airand_logo_rounded_white.png" alt="" height="22" />
                                     {/* <span className="logo-lg-text-light">UBold</span> */}
                                 </span>
                                 <span className="logo-lg">
@@ -270,7 +270,7 @@ class TopBar extends Component {
 
                             <a href="/home" className="logo logo-light text-center">
                                 <span className="logo-sm">
-                                    <img src="../assets/images/airand_logo.png" alt="" height="22" />
+                                    <img src="../assets/images/airand_logo_rounded_white.png" alt="" height="22" />
                                 </span>
                                 <span className="logo-lg">
                                     <img src="../assets/images/airand_name_logo.png" alt="" height="20" />

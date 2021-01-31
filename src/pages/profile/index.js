@@ -4,6 +4,7 @@ import SideBar from '../../components/sidebar'
 import TopBar from '../../components/topbar'
 import Footer from '../../components/footer'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
+import {Link} from 'react-scroll'
 
 
 const ls = require('local-storage');
@@ -34,6 +35,7 @@ export default class Profile extends Component {
             managerEmail: '',
             managerFullName: '',
             selectedBank: 0,
+            thePosition: 0,
         }
 
     }
@@ -44,6 +46,13 @@ export default class Profile extends Component {
         this.setState({ username, isSetupComplete })
         this.loadCompanyDetails()
     }
+
+    componentDidUpdate = () => {
+        if(this.state.isEdit){
+            const element = document.getElementById('editSection');
+            element.scrollIntoView({behavior: 'smooth'});
+        } 
+      }
 
     loadCompanyDetails = () => {
         const token = getToken();
@@ -59,11 +68,14 @@ export default class Profile extends Component {
                 .then((res) => {
                     if (res.statusCode === 200 && res.data.status) {
                         NotificationManager.success("Fetched company details", 'Success', 5000);
-                        //console.log(res.data)
+                        console.log(res.data)
                         const company = res.data.data.company;
+                        const manager = res.data.data.managers[0];
                         //console.log(company);
                         this.setState({ managers: res.data.data.managers, company: company, accountName: company.accountName, bankName: company.bankName })
                         this.setState({companyAddress: company.companyAddress, companyName: company.companyName, accountName: company.accountName, accountNumber: company.accountNumber})
+                        this.setState({managerFullName: manager.name, managerEmail: manager.email, managerPhone: manager.phone })
+
                         
                     } else {
                         NotificationManager.error(res.data.message, 'Failed', 5000);
@@ -80,6 +92,7 @@ export default class Profile extends Component {
     handleUpdateAccount = () => {
         this.setState({ isEdit: true })
         this.loadBanks();
+        //this.inputElement.click();
     }
 
     loadBanks = () => {
@@ -97,7 +110,12 @@ export default class Profile extends Component {
                     //console.log(res.data);
                     this.setState({ bankList: res.data.data });
                     const bankIndex = res.data.data.findIndex(x => x.name === this.state.company.bankName);
-                    this.setState({ selectedBank: bankIndex });
+                    console.log(bankIndex);
+                    
+                    const name = this.state.bankList[bankIndex].name;
+                    const code = this.state.bankList[bankIndex].code;
+                    this.setState({ bankName: name, bankCode: code, selectedBank: bankIndex })
+
 
                 } else {
                     NotificationManager.error(res.data.message, 'Failed', 5000);
@@ -153,11 +171,11 @@ export default class Profile extends Component {
     }
 
     handleBankSelection = (e) => {
+        
         const index = e.target.value;
         const name = this.state.bankList[index].name;
         const code = this.state.bankList[index].code;
-        // //console.log("CODE: "+ code + " NAME: "+ name)
-        this.setState({ bankName: name, bankCode: code })
+        this.setState({ bankName: name, bankCode: code, selectedBank: index })
     }
 
     handleSubmit = () => {
@@ -176,7 +194,13 @@ export default class Profile extends Component {
                     OfficeArea: this.state.companyAddress,
                 },
                 ridersDetails: [],
-                managerDetails: [],
+                managerDetails: [
+                    {
+                        Name: this.state.managerFullName,
+                        Email: this.state.managerEmail,
+                        Phone: this.state.managerPhone
+                    }
+                ],
                 user: {
                     FirstName: this.state.firstName,
                     LastName: this.state.lastName,
@@ -249,7 +273,7 @@ export default class Profile extends Component {
     render() {
         return (
             <div className="loading"
-                data-layout='{"mode": "light", "width": "fluid", "menuPosition": "fixed", "sidebar": { "color": "light", "size": "default", "showuser": false}, "topbar": {"color": "dark"}, "showRightSidebarOnPageLoad": true}'
+                data-layout='{"mode": "light", "width": "fluid", "menuPosition": "fixed", "sidebar": { "color": "light", "size": "default", "showuser": false}, "topbar": {"color": "light"}, "showRightSidebarOnPageLoad": true}'
             >
 
                 {/* Begin page */}
@@ -258,10 +282,6 @@ export default class Profile extends Component {
                     <TopBar history={this.props.history} />
 
                     <SideBar history={this.props.history} />
-
-                    {/* ============================================================== */}
-                    {/* Start Page Content here */}
-                    {/* ============================================================== */}
 
                     <div className="content-page">
                         <div className="content">
@@ -299,13 +319,15 @@ export default class Profile extends Component {
                                 <div className="row">
                                     <div className="col-lg-4 col-xl-4">
                                         <div className="card-box text-center">
-                                            <img src="../assets/images/users/user-1.jpg" className="rounded-circle avatar-lg img-thumbnail"
+                                            <img src="../assets/images/users/default-avatar.jpg" className="rounded-circle avatar-lg img-thumbnail"
                                                 alt="profile-avatar" />
 
                                             <h4 className="mb-0">{this.state.user.firstName} {this.state.user.lastName}</h4>
                                             <p className="text-muted">{this.state.username}</p>
-
-                                            <button onClick={this.handleUpdateAccount} type="button" data-toggle="tab" data-target="#settings" className="btn btn-success btn-xs waves-effect mb-2 mr-1 waves-light">Update Account</button>
+                                            
+                                             <button onClick={this.handleUpdateAccount} type="button" data-toggle="tab" data-target="#settings" className="btn btn-success btn-xs waves-effect mb-2 mr-1 waves-light">Update Account
+                                             <Link ref={input => this.inputElement = input} to="editSection" spy={true} smooth={true}></Link>
+                                             </button> 
                                             <button type="button" className="btn btn-danger btn-xs waves-effect mb-2 waves-light" disabled>Deactivate</button>
 
                                             <div className="text-left mt-3">
@@ -314,11 +336,11 @@ export default class Profile extends Component {
                                             Hi I'm Johnathn Deo,has been the industry's standard dummy text ever since the
                                             1500s, when an unknown printer took a galley of type.
                                         </p> */}
-                                                <p className="text-muted mb-2 font-13"><strong>Full Name :</strong> <span className="ml-2">
+                                                {/* <p className="text-muted mb-2 font-13"><strong>Full Name :</strong> <span className="ml-2">
                                                     {this.state.user.firstName} {this.state.user.lastName}</span></p>
 
                                                 <p className="text-muted mb-2 font-13"><strong>Mobile :</strong><span className="ml-2">
-                                                    {this.state.user.phone}</span></p>
+                                                    {this.state.user.phone}</span></p> */}
 
                                                 <p className="text-muted mb-2 font-13"><strong>Email :</strong> <span className="ml-2 ">{this.state.username}</span></p>
 
@@ -364,7 +386,7 @@ export default class Profile extends Component {
                                             </ul>
                                         </div>
 
-                                        <div className="card-box">
+                                        {/* <div className="card-box">
 
                                             <h4 className="header-title mb-3">Manager<sub>(s)</sub></h4>
                                             {this.state.isSetupComplete ?
@@ -389,52 +411,52 @@ export default class Profile extends Component {
 
                                             </div>
 
-                                        </div>
+                                        </div> */}
 
                                     </div>
 
                                     {this.state.isEdit
-                                        ? <div className="col-lg-8 col-xl-8">
+                                        ? <div id="editSection" className="col-lg-8 col-xl-8">
                                             <div className="card-box">
                                                 <ul className="nav nav-pills navtab-bg nav-justified">
 
                                                     <li className="nav-item">
                                                         <a href="#settings" data-toggle="tab" aria-expanded="false" className="nav-link">
                                                             Account
-                                            </a>
+                                                        </a>
                                                     </li>
                                                 </ul>
                                                 <div className="tab-content">
 
                                                     <div className="tab-pane" id="settings">
                                                         <form>
-                                                            <h5 className="mb-4 text-uppercase"><i className="mdi mdi-account-circle mr-1"></i> Personal Info</h5>
+                                                            <h5 className="mb-4 text-uppercase"><i className="mdi mdi-account-circle mr-1"></i> Manager's Info</h5>
                                                             <div className="row">
                                                                 <div className="col-md-6">
                                                                     <div className="form-group">
-                                                                        <label htmlFor="firstname">First Name</label>
-                                                                        <input type="text" className="form-control" onChange={(e) => { this.setState({ firstName: e.target.value }) }} id="firstname" value={this.state.firstName} placeholder="Enter first name" />
+                                                                        <label htmlFor="firstname">Full Name</label>
+                                                                        <input type="text" className="form-control" onChange={(e) => { this.setState({ managerFullName: e.target.value }) }} id="managerFullName" defaultValue={this.state.managerFullName} placeholder="Enter full name" />
                                                                     </div>
                                                                 </div>
-                                                                <div className="col-md-6">
+                                                                {/* <div className="col-md-6">
                                                                     <div className="form-group">
                                                                         <label htmlFor="lastname">Last Name</label>
                                                                         <input type="text" className="form-control" onChange={(e) => { this.setState({ lastName: e.target.value }) }} id="lastname" value={this.state.lastName} placeholder="Enter last name" />
                                                                     </div>
-                                                                </div>
+                                                                </div> */}
                                                             </div>
 
                                                             <div className="row">
                                                                 <div className="col-md-6">
                                                                     <div className="form-group">
                                                                         <label htmlFor="firstname">Phone Number</label>
-                                                                        <input type="text" className="form-control" onChange={(e) => { this.setState({ phone: e.target.value }) }} id="phone" value={this.state.phone} placeholder="Enter phone number" />
+                                                                        <input type="text" className="form-control" onChange={(e) => { this.setState({ managerPhone: e.target.value }) }} id="managerPhone" defaultValue={this.state.managerPhone} placeholder="Enter phone number" />
                                                                     </div>
                                                                 </div>
                                                                 <div className="col-md-6">
                                                                     <div className="form-group">
                                                                         <label htmlFor="firstname">Email</label>
-                                                                        <input type="text" className="form-control" id="phone" value={this.state.username} disabled />
+                                                                        <input type="text" className="form-control" onChange={(e) => { this.setState({ managerEmail: e.target.value }) }} id="managerEmail" defaultValue={this.state.managerEmail} />
                                                                     </div>
                                                                 </div>
 
@@ -454,13 +476,13 @@ export default class Profile extends Component {
                                                                 <div className="col-md-6">
                                                                     <div className="form-group">
                                                                         <label htmlFor="companyname">Company Name</label>
-                                                                        <input type="text" className="form-control" id="companyname" onChange={(e) => { this.setState({ companyName: e.target.value }) }} value={this.state.company.companyName} placeholder="Enter company name" />
+                                                                        <input type="text" className="form-control" id="companyname" onChange={(e) => { this.setState({ companyName: e.target.value }) }} defaultValue={this.state.company.companyName} placeholder="Enter company name" />
                                                                     </div>
                                                                 </div>
                                                                 <div className="col-md-6">
                                                                     <div className="form-group">
                                                                         <label htmlFor="cwebsite">Company Address</label>
-                                                                        <input type="text" className="form-control" id="cwebsite" onChange={(e) => { this.setState({ companyAddress: e.target.value }) }} value={this.state.company.companyAddress} placeholder="Enter company address" />
+                                                                        <input type="text" className="form-control" id="cwebsite" onChange={(e) => { this.setState({ companyAddress: e.target.value }) }} defaultValue={this.state.company.companyAddress} placeholder="Enter company address" />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -480,7 +502,7 @@ export default class Profile extends Component {
                                                                 <div className="col-md-4">
                                                                     <div className="form-group">
                                                                         <label htmlFor="cwebsite">Account Number</label>
-                                                                        <input onChange={this.handleAccountNumber} type="text" className="form-control" id="accountNumber" value={this.state.company.accountNumber} placeholder="Enter account number" />
+                                                                        <input onChange={this.handleAccountNumber} type="text" className="form-control" id="accountNumber" defaultValue={this.state.company.accountNumber} placeholder="Enter account number" />
                                                                     </div>
                                                                 </div>
                                                                 <div className="col-md-4">
