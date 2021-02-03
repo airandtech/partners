@@ -164,6 +164,7 @@ export default class Login extends Component {
 
                                             </div>
                                             {/* social*/}
+                                            {/*
                                             <div className="text-center mt-4">
                                                 <p className="text-muted font-16">Sign in with</p>
                                                 <ul className="social-list list-inline mt-3">
@@ -181,6 +182,7 @@ export default class Login extends Component {
                                                     </li>
                                                 </ul>
                                             </div>
+                                            */}
                                         </form>
                                         {/* end form*/}
                                     </div>
