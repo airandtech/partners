@@ -86,8 +86,8 @@ export const isActive = (dateString) => {
   var before = moment(dateString);
 
   var duration = moment.duration(now.diff(before));
-  var hours = Math.abs(duration.asHours());
-  if(hours < 3)
+  var minutes = Math.abs(duration.asMinutes());
+  if(minutes < 15)
     return true;
   else 
     return false;

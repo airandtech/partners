@@ -251,7 +251,7 @@ export default class OrderDetails extends Component {
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="mb-4">
-                                                            <h5>Distance</h5>
+                                                            <h5>Rider's distance to pickup location</h5>
                                                             <p>{this.state.distance}</p>
                                                         </div>
                                                     </div>

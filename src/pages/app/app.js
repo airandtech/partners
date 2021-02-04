@@ -59,6 +59,7 @@ class AppBase extends Component {
       <div>
           <Switch>
             <Route exact path="/auth" render={() => <Login history={this.props.history} />}  />
+            <Route exact path="/" render={() => <Login history={this.props.history} />}  />
             
             
             {/* <Route exact path="/account" render={() => <Profile history={this.props.history} />}  /> */}

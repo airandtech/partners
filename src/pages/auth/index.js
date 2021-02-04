@@ -9,7 +9,7 @@ export default class Login extends Component {
         this.state = {
             username: '',
             password: '',
-            rememberMe: false,
+            rememberMe: true,
             loading: false,
             isLoginInvalid: false,
             isSignupInvalid: false,
