@@ -41,7 +41,8 @@ export default class Login extends Component {
             .then(processResponse)
             .then((res) => {
                 if (res.statusCode === 200) {
-                    this.state.rememberMe ? ls.set('token', res.data.token) : sessionStorage.setItem('token', res.data.token)
+                    // this.state.rememberMe ? ls.set('token', res.data.token) : sessionStorage.setItem('token', res.data.token)
+                    ls.set('token', res.data.token)
                     ls.set('isSetupComplete', res.data.isSetupComplete)
                     ls.set('username', res.data.username)
                     res.data.isSetupComplete ? history.push("/home") : history.push("/account")
