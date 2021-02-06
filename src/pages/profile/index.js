@@ -68,7 +68,7 @@ export default class Profile extends Component {
                 .then((res) => {
                     if (res.statusCode === 200 && res.data.status) {
                         NotificationManager.success("Fetched company details", 'Success', 5000);
-                        console.log(res.data)
+                        //console.log(res.data)
                         const company = res.data.data.company;
                         const manager = res.data.data.managers[0];
                         //console.log(company);
@@ -110,7 +110,7 @@ export default class Profile extends Component {
                     //console.log(res.data);
                     this.setState({ bankList: res.data.data });
                     const bankIndex = res.data.data.findIndex(x => x.name === this.state.company.bankName);
-                    console.log(bankIndex);
+                    //console.log(bankIndex);
                     
                     const name = this.state.bankList[bankIndex].name;
                     const code = this.state.bankList[bankIndex].code;

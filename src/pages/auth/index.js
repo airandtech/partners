@@ -72,7 +72,7 @@ export default class Login extends Component {
             body: JSON.stringify({ username: this.state.username, password: this.state.password, isCompany: true }),
         }).then(processResponse)
             .then((res) => {
-                console.log(res.data)
+                //console.log(res.data)
                 if (res.statusCode === 200) {
                     sessionStorage.setItem('token', res.data.token);
                     res.data.isSetupComplete ? history.push("/home") : history.push("/account")

@@ -47,7 +47,7 @@ export default class OrderDetails extends Component {
             .then((res) => {
                 if (res.statusCode === 200 && res.data.status) {
                     NotificationManager.success("Order details retrieved", 'Success', 5000);
-                    console.log(res.data)
+                    //console.log(res.data)
                     const data = res.data.data;
                     this.setState({ pickupDetails: data.pickupDetails, orders: data.orders })
                     if (data.orders.length > 0) {

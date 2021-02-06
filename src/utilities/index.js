@@ -5,7 +5,8 @@ const ls = require('local-storage');
 
 export const baseUrl = () => {
   // return 'https://cors-anywhere.herokuapp.com/https://airandapi.azurewebsites.net/';
-  return 'https://airandapi.azurewebsites.net/';
+  //return 'https://airandapi.azurewebsites.net/';
+  return 'https://api.airand.net/';
 };
 
 export const payStackBaseUrl = () => {
@@ -105,7 +106,7 @@ export const formatMoney = (amount, decimalCount = 2, decimal = ".", thousands =
 
     return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
   } catch (e) {
-    console.log(e)
+    console.error(e)
   }
 };
 
