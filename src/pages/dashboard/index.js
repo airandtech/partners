@@ -18,6 +18,7 @@ export default class Dashboard extends Component {
             todayTransactions: [],
             totalTransactions: [],
             riders: [],
+            orders: [],
         }
 
     }
@@ -45,12 +46,12 @@ export default class Dashboard extends Component {
                         const {
                             totalTransactionsVolume, totalTransactionsValue, todayTransactionsVolume,
                             todayTransactionsValue, totalSuccessfulVolume, totalSuccessValue,
-                            todayTransactions, totalTransactions, riders
+                            todayTransactions, totalTransactions, riders, orders
                         } = res.data.data;
                         this.setState({
                             totalTransactionsVolume, totalTransactionsValue, todayTransactionsVolume,
                             todayTransactionsValue, totalSuccessfulVolume, totalSuccessValue,
-                            todayTransactions, totalTransactions, riders
+                            todayTransactions, totalTransactions, riders, orders
                         })
 
                     } else {
@@ -363,7 +364,7 @@ export default class Dashboard extends Component {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {this.state.todayTransactions.map((index, item)=> 
+                                                        {this.state.orders.map((index, item)=> 
                                                             
                                                         <tr>
                                                             <td>

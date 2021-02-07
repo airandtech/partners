@@ -22,6 +22,7 @@ export default class Orders extends Component {
             todayTransactions: [],
             totalTransactions: [],
             riders: [],
+            orders: [],
         }
 
     }
@@ -36,7 +37,7 @@ export default class Orders extends Component {
     loadDashboardStatistics = () => {
         const token = getToken();
         if (token) {
-            fetch(baseUrl() + 'api/company/dashboard', {
+            fetch(baseUrl() + 'api/dispatch/orders/company?limit=90&offset=0', {
                 method: 'get',
                 headers: {
                     'Content-Type': 'application/json',
@@ -47,18 +48,10 @@ export default class Orders extends Component {
                 .then((res) => {
                     if (res.statusCode === 200 && res.data.status) {
                         NotificationManager.success("Dashboard updated", 'Success', 5000);
-                        //console.log(res.data)
+                        console.log(res.data)
                         //console.log("DATA GOTTEN")
-                        const {
-                            totalTransactionsVolume, totalTransactionsValue, todayTransactionsVolume,
-                            todayTransactionsValue, totalSuccessfulVolume, totalSuccessValue,
-                            todayTransactions, totalTransactions, riders
-                        } = res.data.data;
-                        this.setState({
-                            totalTransactionsVolume, totalTransactionsValue, todayTransactionsVolume,
-                            todayTransactionsValue, totalSuccessfulVolume, totalSuccessValue,
-                            todayTransactions, totalTransactions, riders
-                        })
+                        const orders = res.data.data;
+                        this.setState({ orders })
 
                     } else {
                         NotificationManager.error(res.data.message, 'Failed', 5000);
@@ -153,7 +146,7 @@ export default class Orders extends Component {
 
 
                                                     <tbody>
-                                                        {this.state.todayTransactions.map((index, item) =>
+                                                        {this.state.orders.map((index, item) =>
 
                                                             <tr>
                                                                 <td>
