@@ -4,9 +4,9 @@ import moment from 'moment';
 const ls = require('local-storage');
 
 export const baseUrl = () => {
-  return 'https://cors-anywhere.herokuapp.com/https://airandapi.azurewebsites.net/';
+  // return 'https://cors-anywhere.herokuapp.com/https://airandapi.azurewebsites.net/';
   //return 'https://airandapi.azurewebsites.net/';
-  // return 'https://api.airand.net/';
+  return 'https://api.airand.net/';
   // return 'http://localhost:5000/';
 };
 
