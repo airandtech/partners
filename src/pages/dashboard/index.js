@@ -268,7 +268,7 @@ export default class Dashboard extends Component {
                                 <div className="row">
                                     <div className="col-xl-6">
                                         <div className="card-box">
-                                            <div className="dropdown float-right">
+                                            {/* <div className="dropdown float-right">
                                                 <a href="#" className="dropdown-toggle arrow-none card-drop" data-toggle="dropdown" aria-expanded="false">
                                                     <i className="mdi mdi-dots-vertical"></i>
                                                 </a>
@@ -280,7 +280,7 @@ export default class Dashboard extends Component {
 
                                                     <a href="#" className="dropdown-item">Action</a>
                                                 </div>
-                                            </div>
+                                            </div> */}
 
                                             <h4 className="header-title mb-3">Top 5 Active Riders</h4>
 
@@ -335,19 +335,19 @@ export default class Dashboard extends Component {
 
                                     <div className="col-xl-6">
                                         <div className="card-box">
-                                            <div className="dropdown float-right">
+                                            {/* <div className="dropdown float-right">
                                                 <a href="#" className="dropdown-toggle arrow-none card-drop" data-toggle="dropdown" aria-expanded="false">
                                                     <i className="mdi mdi-dots-vertical"></i>
                                                 </a>
                                                 <div className="dropdown-menu dropdown-menu-right">
-                                                    {/* item*/}
+                                              
                                                     <a href="#" className="dropdown-item">Edit Report</a>
-                                                    {/* item*/}
+                                               
                                                     <a href="#" className="dropdown-item">Export Report</a>
-                                                    {/* item*/}
+                                                  
                                                     <a href="#" className="dropdown-item">Action</a>
                                                 </div>
-                                            </div>
+                                            </div> */}
 
                                             <h4 className="header-title mb-3">Latest Orders</h4>
 
@@ -364,9 +364,9 @@ export default class Dashboard extends Component {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {this.state.orders.map((index, item)=> 
+                                                        {this.state.orders.map((item, index)=> 
                                                             
-                                                        <tr>
+                                                        <tr key={index}>
                                                             <td>
                                                                 <h5 className="m-0 font-weight-normal">{item.requestorIdentifier}</h5>
                                                             </td>
@@ -381,12 +381,12 @@ export default class Dashboard extends Component {
 
                                                             <td>
 
-                                                            {item.status === "01" ? <span className="badge bg-soft-warning text-warning">Pending</span> : item.status === "00" ? <span className="badge bg-soft-success text-success">Completed</span> : item.status === "02" ? <span className="badge bg-soft-info text-info">Created</span> : <span className="badge bg-soft-info text-info">Created</span>}
+                                                            {item.status === "01" ? <span className="badge bg-soft-warning text-warning">Accepted</span> : item.status === "00" ? <span className="badge bg-soft-success text-success">Delivered</span> : item.status === "02" ? <span className="badge bg-soft-info text-info">Picked Up</span> : <span className="badge bg-soft-info text-info">Created</span>}
                                                             </td>
 
                                                             <td>
                                                                 {item.paymentStatus === 0 ? <span className="badge bg-soft-danger text-danger">UnPaid</span> : <span className="badge bg-soft-success text-success">Paid</span>}
-                                                                <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-pencil"></i></a>
+                                                                {/* <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-pencil"></i></a> */}
                                                             </td>
                                                         </tr>
 

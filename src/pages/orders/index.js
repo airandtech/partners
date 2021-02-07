@@ -48,7 +48,7 @@ export default class Orders extends Component {
                 .then((res) => {
                     if (res.statusCode === 200 && res.data.status) {
                         NotificationManager.success("Dashboard updated", 'Success', 5000);
-                        console.log(res.data)
+                        //console.log(res.data)
                         //console.log("DATA GOTTEN")
                         const orders = res.data.data;
                         this.setState({ orders })
@@ -132,51 +132,51 @@ export default class Orders extends Component {
                                                 </div>
                                             </div>
 
-                                            
-                                                <table id="datatable-buttons" className="table table-striped dt-responsive nowrap w-100">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Customer</th>
-                                                            <th>Date</th>
-                                                            <th>Amount</th>
-                                                            <th>Status</th>
-                                                            <th>Payment Status</th>
+
+                                            <table id="datatable-buttons" className="table table-striped dt-responsive nowrap w-100">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Customer</th>
+                                                        <th>Date</th>
+                                                        <th>Amount</th>
+                                                        <th>Status</th>
+                                                        <th>Payment Status</th>
+                                                    </tr>
+                                                </thead>
+
+
+                                                <tbody>
+                                                    {this.state.orders.map((item, index) =>
+
+                                                        <tr key={index}>
+                                                            <td>
+                                                                <h5 className="m-0 font-weight-normal">{item.requestorIdentifier}</h5>
+                                                            </td>
+
+                                                            <td>
+                                                                {formatDate(item.lastModified)}
+                                                            </td>
+
+                                                            <td>
+                                                                ₦{item.cost}
+                                                            </td>
+
+                                                            <td>
+
+                                                                {item.status === "01" ? <span className="badge bg-soft-warning text-warning">Accepted</span> : item.status === "00" ? <span className="badge bg-soft-success text-success">Delivered</span> : item.status === "02" ? <span className="badge bg-soft-info text-info">Picked Up</span> : <span className="badge bg-soft-info text-info">Created</span>}
+                                                            </td>
+
+                                                            <td>
+                                                                {item.paymentStatus === 0 ? <span className="badge bg-soft-danger text-danger">UnPaid</span> : <span className="badge bg-soft-success text-success">Paid</span>}
+                                                                {/* <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-pencil"></i></a> */}
+                                                            </td>
                                                         </tr>
-                                                    </thead>
 
+                                                    )}
 
-                                                    <tbody>
-                                                        {this.state.orders.map((index, item) =>
+                                                </tbody>
+                                            </table>
 
-                                                            <tr>
-                                                                <td>
-                                                                    <h5 className="m-0 font-weight-normal">{item.requestorIdentifier}</h5>
-                                                                </td>
-
-                                                                <td>
-                                                                    {formatDate(item.lastModified)}
-                                                                </td>
-
-                                                                <td>
-                                                                    ₦{item.cost}
-                                                                </td>
-
-                                                                <td>
-
-                                                                    {item.status === "01" ? <span className="badge bg-soft-warning text-warning">Pending</span> : item.status === "00" ? <span className="badge bg-soft-success text-success">Completed</span> : item.status === "02" ? <span className="badge bg-soft-info text-info">Created</span> : <span className="badge bg-soft-info text-info">Created</span>}
-                                                                </td>
-
-                                                                <td>
-                                                                    {item.paymentStatus === 0 ? <span className="badge bg-soft-danger text-danger">UnPaid</span> : <span className="badge bg-soft-success text-success">Paid</span>}
-                                                                    <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-pencil"></i></a>
-                                                                </td>
-                                                            </tr>
-
-                                                        )}
-
-                                                    </tbody>
-                                                </table>
-                                                
                                         </div>
                                     </div>
                                 </div>
