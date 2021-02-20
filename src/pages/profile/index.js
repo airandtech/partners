@@ -124,7 +124,7 @@ export default class Profile extends Component {
             })
             .catch((error) => {
                 NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
-                //console.log("FAILED :", error)
+                console.log("::500::", error)
             });
     }
 
@@ -134,6 +134,7 @@ export default class Profile extends Component {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
                 'Authorization': 'Bearer ' + fwToken(),
             },
             body: JSON.stringify({ account_number, account_bank: this.state.bankCode }),
