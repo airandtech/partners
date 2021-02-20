@@ -4,7 +4,7 @@ import SideBar from '../../components/sidebar'
 import TopBar from '../../components/topbar'
 import Footer from '../../components/footer'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
-import {Link} from 'react-scroll'
+import { Link } from 'react-scroll'
 
 
 const ls = require('local-storage');
@@ -48,11 +48,11 @@ export default class Profile extends Component {
     }
 
     componentDidUpdate = () => {
-        if(this.state.isEdit){
+        if (this.state.isEdit) {
             const element = document.getElementById('editSection');
-            element.scrollIntoView({behavior: 'smooth'});
-        } 
-      }
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
 
     loadCompanyDetails = () => {
         const token = getToken();
@@ -71,12 +71,13 @@ export default class Profile extends Component {
                         //console.log(res.data)
                         const company = res.data.data.company;
                         const manager = res.data.data.managers[0];
-                        //console.log(company);
-                        this.setState({ managers: res.data.data.managers, company: company, accountName: company.accountName, bankName: company.bankName })
-                        this.setState({companyAddress: company.companyAddress, companyName: company.companyName, accountName: company.accountName, accountNumber: company.accountNumber})
-                        this.setState({managerFullName: manager.name, managerEmail: manager.email, managerPhone: manager.phone })
-
                         
+                        this.setState({ managers: res.data.data.managers, company: company, accountName: company.accountName, bankName: company.bankName })
+                        this.setState({ companyAddress: company.companyAddress, companyName: company.companyName, accountName: company.accountName, accountNumber: company.accountNumber })
+                        if(manager){
+                            this.setState({ managerFullName: manager.name, managerEmail: manager.email, managerPhone: manager.phone })
+                        }
+
                     } else {
                         NotificationManager.error(res.data.message, 'Failed', 5000);
                         //console.log("FAILED: ", res.data.message)
@@ -84,7 +85,7 @@ export default class Profile extends Component {
                 })
                 .catch((error) => {
                     NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
-                    //console.log("FAILED :", error)
+                    console.error("::ERROR::", error)
                 });
         }
     }
@@ -111,7 +112,7 @@ export default class Profile extends Component {
                     this.setState({ bankList: res.data.data });
                     const bankIndex = res.data.data.findIndex(x => x.name === this.state.company.bankName);
                     //console.log(bankIndex);
-                    
+
                     const name = this.state.bankList[bankIndex].name;
                     const code = this.state.bankList[bankIndex].code;
                     this.setState({ bankName: name, bankCode: code, selectedBank: bankIndex })
@@ -130,33 +131,32 @@ export default class Profile extends Component {
 
     resolveAccountNumber = (account_number) => {
         this.setState({ isEnquiry: true })
-        fetch(flutterwaveBaseUrl() + 'v3/accounts/resolve', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Authorization': 'Bearer ' + fwToken(),
-            },
-            body: JSON.stringify({ account_number, account_bank: this.state.bankCode }),
-        })
-            .then(processResponse)
-            .then((res) => {
-                this.setState({ isEnquiry: false })
-                if (res.statusCode === 200 && res.data.status === "success") {
-                    NotificationManager.success(res.data.message, 'Success', 5000);
-                    //console.log(res.data)
-                    this.setState({ accountName: res.data.data.account_name })
-
-                } else {
-                    NotificationManager.error(res.data.message, 'Failed', 5000);
-                    //console.log("FAILED: ", res.data.message)
-                }
+        const token = getToken();
+        if (token) {
+            fetch(baseUrl() + 'api/company/accounts/resolve', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                },
+                body: JSON.stringify({ AccountNumber: account_number, BankCode: this.state.bankCode }),
             })
-            .catch((error) => {
-                this.setState({ isEnquiry: false })
-                NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
-                //console.log("FAILED :", error)
-            });
+                .then(processResponse)
+                .then((res) => {
+                    this.setState({ isEnquiry: false })
+                    if (res.statusCode === 200 && res.data.status) {
+                        NotificationManager.success(res.data.message, 'Success', 5000);
+                        this.setState({ accountName: res.data.data.account_name })
+
+                    } else {
+                        NotificationManager.error(res.data.message, 'Failed', 5000);
+                    }
+                })
+                .catch((error) => {
+                    this.setState({ isEnquiry: false })
+                    NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
+                });
+        }
     }
 
     handleAccountNumber = (e) => {
@@ -172,7 +172,7 @@ export default class Profile extends Component {
     }
 
     handleBankSelection = (e) => {
-        
+
         const index = e.target.value;
         const name = this.state.bankList[index].name;
         const code = this.state.bankList[index].code;
@@ -227,6 +227,7 @@ export default class Profile extends Component {
             .catch((error) => {
                 NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
                 this.setState({ loading: false })
+                console.error("::ERROR::", error)
             });
     }
 
@@ -268,6 +269,7 @@ export default class Profile extends Component {
             .catch((error) => {
                 NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
                 this.setState({ loading: false })
+                console.error("::ERROR::", error)
             });
     }
 
@@ -325,10 +327,10 @@ export default class Profile extends Component {
 
                                             <h4 className="mb-0">{this.state.user.firstName} {this.state.user.lastName}</h4>
                                             <p className="text-muted">{this.state.username}</p>
-                                            
-                                             <button onClick={this.handleUpdateAccount} type="button" data-toggle="tab" data-target="#settings" className="btn btn-success btn-xs waves-effect mb-2 mr-1 waves-light">Update Account
+
+                                            <button onClick={this.handleUpdateAccount} type="button" data-toggle="tab" data-target="#settings" className="btn btn-success btn-xs waves-effect mb-2 mr-1 waves-light">Update Account
                                              <Link ref={input => this.inputElement = input} to="editSection" spy={true} smooth={true}></Link>
-                                             </button> 
+                                            </button>
                                             <button type="button" className="btn btn-danger btn-xs waves-effect mb-2 waves-light" disabled>Deactivate</button>
 
                                             <div className="text-left mt-3">
