@@ -15,7 +15,7 @@ export const payStackBaseUrl = () => {
 };
 
 export const flutterwaveBaseUrl = () => {
-  return 'https://cors-anywhere.herokuapp.com/https://api.flutterwave.com/';
+  return 'https://api.flutterwave.com/';
 };
 
 export const getToken = () => {

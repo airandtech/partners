@@ -9,22 +9,22 @@ export default class PrivacyPolicy extends Component {
   render() {
     return (
       <>
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title" id="standard-modalLabel">
+        <div className="modal-dialog modal-dialog-centered modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h4 className="modal-title" id="standard-modalLabel">
                 Privacy Policy
               </h4>
               <button
                 type="button"
-                class="close"
+                className="close"
                 data-dismiss="modal"
                 aria-hidden="true"
               >
                 ×
               </button>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <h6>Last updated November 04, 2020</h6>
 
               <p>
@@ -663,8 +663,8 @@ export default class PrivacyPolicy extends Component {
               <br />
               <br />
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-light" data-dismiss="modal">
+            <div className="modal-footer">
+              <button type="button" className="btn btn-light" data-dismiss="modal">
                 Close
               </button>
             </div>
