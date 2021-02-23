@@ -5,10 +5,13 @@ import TopBar from '../../components/topbar'
 import Footer from '../../components/footer'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
+const ls = require('local-storage');
 export default class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isSetupComplete: true,
+            username: '',
             totalTransactionsVolume: 0,
             totalTransactionsValue: 0.0,
             todayTransactionsVolume: 0,
@@ -24,6 +27,9 @@ export default class Dashboard extends Component {
     }
 
     componentDidMount = () => {
+        let username = ls.get('username');
+        let isSetupComplete = ls.get('isSetupComplete');
+        this.setState({ username, isSetupComplete })
         this.loadDashboardStatistics();
     }
 
@@ -115,7 +121,15 @@ export default class Dashboard extends Component {
                                             </div>
                                             <h4 className="page-title">Dashboard</h4>
                                         </div>
-                                    </div>
+                                            {!this.state.isSetupComplete ?
+                                                <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                                                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    <strong>Info !!!</strong> Account Activation is incomplete, kindly update account.
+                                                </div>
+                                            : <></>}
+                                     </div>
                                 </div>
                                 {/* end page title */}
 

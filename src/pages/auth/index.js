@@ -115,18 +115,18 @@ export default class Login extends Component {
 
                                 <ul className="nav nav-tabs nav-bordered">
                                     <li className="nav-item">
-                                        <a href="#tab-login" data-toggle="tab" aria-expanded="false" className="nav-link active">
+                                        <a href="#tab-login" data-toggle="tab" aria-expanded="false" className="nav-link">
                                             Log In
                                     </a>
                                     </li>
                                     <li className="nav-item">
-                                        <a href="#tab-signup" data-toggle="tab" aria-expanded="true" className="nav-link">
+                                        <a href="#tab-signup" data-toggle="tab" aria-expanded="true" className="nav-link active">
                                             Sign Up
                                     </a>
                                     </li>
                                 </ul>
                                 <div className="tab-content">
-                                    <div className="tab-pane show active" id="tab-login">
+                                    <div className="tab-pane" id="tab-login">
 
                                         {this.state.isLoginInvalid ?
                                             <div className="alert alert-danger" role="alert">
@@ -156,11 +156,11 @@ export default class Login extends Component {
                                             <div className="form-group mb-0 text-center">
 
                                                 {this.state.loading ?
-                                                    <button className="btn btn-primary btn-block" type="button" disabled>
+                                                    <button style={{background: "#07223D", borderColor: "#07223D"}} className="btn btn-primary btn-block" type="button" disabled>
                                                         <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>Processing ...
                                             </button>
                                                     :
-                                                    <button className="btn btn-primary btn-block" type="submit">Log In </button>
+                                                    <button style={{background: "#07223D", borderColor: "#07223D"}} className="btn btn-primary btn-block" type="submit">Log In </button>
                                                 }
 
                                             </div>
@@ -187,7 +187,7 @@ export default class Login extends Component {
                                         </form>
                                         {/* end form*/}
                                     </div>
-                                    <div className="tab-pane" id="tab-signup">
+                                    <div className="tab-pane show active" id="tab-signup">
                                         {this.state.isSignupInvalid ?
                                             <div className="alert alert-danger" role="alert">
                                                 <i className="mdi mdi-block-helper mr-2"></i> Registration <strong>Failed !!! </strong> <br />{this.state.authMessage}
@@ -213,17 +213,17 @@ export default class Login extends Component {
                                             <div className="form-group">
                                                 <div className="custom-control custom-checkbox">
                                                     <input onChange={e => this.setState({ acceptedTerms: e.target.checked })} type="checkbox" className="custom-control-input" id="checkbox-signup" />
-                                                    <label className="custom-control-label" htmlFor="checkbox-signup">I accept <a href="#" className="text-dark">Terms and Conditions</a></label>
+                                                    <label className="custom-control-label" htmlFor="checkbox-signup">I accept <a data-toggle="modal" data-target="#service-terms" href="#" className="text-dark">Terms and Conditions</a></label>
                                                 </div>
                                             </div>
                                             <div className="form-group mb-0 text-center">
 
                                                 {this.state.loading ?
-                                                    <button className="btn btn-primary btn-block" type="button" disabled>
+                                                    <button style={{background: "#07223D", borderColor: "#07223D"}} className="btn btn-primary btn-block" type="button" disabled>
                                                         <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>Processing ...
                                             </button>
                                                     :
-                                                    <button className="btn btn-primary waves-effect waves-light btn-block" type="submit"> Sign Up </button>
+                                                    <button style={{background: "#07223D", borderColor: "#07223D"}} className="btn btn-primary waves-effect waves-light btn-block" type="submit"> Sign Up </button>
                                                 }
                                             </div>
                                             {/* social*/}

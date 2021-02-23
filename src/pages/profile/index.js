@@ -4,7 +4,7 @@ import SideBar from '../../components/sidebar'
 import TopBar from '../../components/topbar'
 import Footer from '../../components/footer'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
-import { Link } from 'react-scroll'
+import { Link, scroller } from 'react-scroll'
 
 
 const ls = require('local-storage');
@@ -36,6 +36,7 @@ export default class Profile extends Component {
             managerFullName: '',
             selectedBank: 0,
             thePosition: 0,
+            toBeScrolled: false,
         }
 
     }
@@ -48,11 +49,19 @@ export default class Profile extends Component {
     }
 
     componentDidUpdate = () => {
-        if (this.state.isEdit) {
-            const element = document.getElementById('editSection');
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
+        // if (this.state.isEdit && this.state.toBeScrolled) {
+        //     const element = document.getElementById('editSection');
+        //     element.scrollIntoView({ behavior: 'smooth' });
+        // }
     }
+
+    scrollToEditSection = () => {
+        const yOffset = -10;
+        const element = document.getElementById('settings');
+
+        element.scrollIntoView({ behavior: 'smooth' });
+    }
+
 
     loadCompanyDetails = () => {
         const token = getToken();
@@ -71,10 +80,10 @@ export default class Profile extends Component {
                         //console.log(res.data)
                         const company = res.data.data.company;
                         const manager = res.data.data.managers[0];
-                        
+
                         this.setState({ managers: res.data.data.managers, company: company, accountName: company.accountName, bankName: company.bankName })
                         this.setState({ companyAddress: company.companyAddress, companyName: company.companyName, accountName: company.accountName, accountNumber: company.accountNumber })
-                        if(manager){
+                        if (manager) {
                             this.setState({ managerFullName: manager.name, managerEmail: manager.email, managerPhone: manager.phone })
                         }
 
@@ -91,9 +100,10 @@ export default class Profile extends Component {
     }
 
     handleUpdateAccount = () => {
-        this.setState({ isEdit: true })
-        this.loadBanks();
-        //this.inputElement.click();
+        this.setState({ isEdit: true }, () => {
+            this.loadBanks()
+            this.scrollToEditSection()
+        })
     }
 
     loadBanks = () => {
@@ -112,10 +122,12 @@ export default class Profile extends Component {
                     this.setState({ bankList: res.data.data });
                     const bankIndex = res.data.data.findIndex(x => x.name === this.state.company.bankName);
                     //console.log(bankIndex);
+                    if (this.state.bankList.length > 0) {
+                        const name = this.state.bankList[bankIndex].name;
+                        const code = this.state.bankList[bankIndex].code;
+                        this.setState({ bankName: name, bankCode: code, selectedBank: bankIndex })
+                    }
 
-                    const name = this.state.bankList[bankIndex].name;
-                    const code = this.state.bankList[bankIndex].code;
-                    this.setState({ bankName: name, bankCode: code, selectedBank: bankIndex })
 
 
                 } else {
@@ -329,7 +341,7 @@ export default class Profile extends Component {
                                             <p className="text-muted">{this.state.username}</p>
 
                                             <button onClick={this.handleUpdateAccount} type="button" data-toggle="tab" data-target="#settings" className="btn btn-success btn-xs waves-effect mb-2 mr-1 waves-light">Update Account
-                                             <Link ref={input => this.inputElement = input} to="editSection" spy={true} smooth={true}></Link>
+                                             {/* <Link ref={input => this.inputElement = input} to="editSection" spy={true} smooth={true}></Link> */}
                                             </button>
                                             <button type="button" className="btn btn-danger btn-xs waves-effect mb-2 waves-light" disabled>Deactivate</button>
 
@@ -429,7 +441,7 @@ export default class Profile extends Component {
                                                         </a>
                                                     </li>
                                                 </ul>
-                                                <div className="tab-content">
+                                                <div id="tabContent" className="tab-content">
 
                                                     <div className="tab-pane" id="settings">
                                                         <form>
