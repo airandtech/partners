@@ -4,9 +4,13 @@ import SideBar from '../../components/sidebar'
 import TopBar from '../../components/topbar'
 import Footer from '../../components/footer'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
+import DataTable from 'react-data-table-component';
+import Select from 'react-select'
 
 
 const ls = require('local-storage');
+
+
 
 export default class Orders extends Component {
     constructor(props) {
@@ -23,6 +27,10 @@ export default class Orders extends Component {
             totalTransactions: [],
             riders: [],
             orders: [],
+            loadingOrders: true,
+            orderId: 0,
+            riderId: 0,
+            ridersSelectList: []
         }
 
     }
@@ -32,6 +40,47 @@ export default class Orders extends Component {
         let isSetupComplete = ls.get('isSetupComplete');
         this.setState({ username, isSetupComplete })
         this.loadDashboardStatistics()
+        this.loadCompanyDetails()
+    }
+
+    loadCompanyDetails = () => {
+        const token = getToken();
+        if (token) {
+            fetch(baseUrl() + 'api/company/user', {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                }
+            })
+                .then(processResponse)
+                .then((res) => {
+                    if (res.statusCode === 200 && res.data.status) {
+                        //NotificationManager.success("Riders retrieved", 'Success', 5000);
+
+                        const riders = res.data.data.riders;
+                        //console.log(riders)
+                        this.setState({ riders })
+                        const options = []
+                        riders.forEach((item, index) => {
+                            let option = {
+                                label: item.user.firstName,
+                                value: item.id
+                            }
+                            options.push(option)
+                        })
+                        this.setState({ ridersSelectList: options })
+
+                    } else {
+                        //NotificationManager.error(res.data.message, 'Failed', 5000);
+                        console.log("FAILED: ", res.data.message)
+                    }
+                })
+                .catch((error) => {
+                    //NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
+                    console.log("FAILED :", error)
+                });
+        }
     }
 
     loadDashboardStatistics = () => {
@@ -47,26 +96,117 @@ export default class Orders extends Component {
                 .then(processResponse)
                 .then((res) => {
                     if (res.statusCode === 200 && res.data.status) {
-                        NotificationManager.success("Dashboard updated", 'Success', 5000);
-                        //console.log(res.data)
-                        //console.log("DATA GOTTEN")
+                        NotificationManager.success("Orders fetched", 'Success', 5000);
                         const orders = res.data.data;
-                        this.setState({ orders })
+                        this.setState({ orders, loadingOrders: false })
 
                     } else {
                         NotificationManager.error(res.data.message, 'Failed', 5000);
-                        //console.log("FAILED: ", res.data.message)
                     }
                 })
                 .catch((error) => {
                     NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
-                    //console.log("FAILED :", error)
                 });
         }
     }
 
+    handleRiderSubmit = () => {
+        this.setState({ loading: true })
+        const token = getToken();
+        if (token) {
+            fetch(baseUrl() + `api/dispatch/assign/${this.state.orderId}/${this.state.riderId}`, {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                }
+            })
+                .then(processResponse)
+                .then((res) => {
+                    console.warn(res)
+                    if (res.statusCode === 200 && res.data.status) {
+                        NotificationManager.success("Order assigned to rider!!!", 'Success', 5000);
+
+                        this.setState({ loading: false })
+                        this.loadDashboardStatistics()
+
+                    } else {
+                        NotificationManager.error(res.data.message, 'Failed', 5000);
+                        this.setState({ loading: false })
+                        console.log("FAILED: ", res.data.message)
+                    }
+                })
+                .catch((error) => {
+                    NotificationManager.error("Oops! we couldn't complete your request, please try again later", 'Failed', 5000);
+                    this.setState({ loading: false })
+                    console.log("FAILED :", error)
+                });
+        }
+    }
+
+
     render() {
+
+        const columns = [
+            {
+                name: 'Customer',
+                selector: 'requestorIdentifier',
+                sortable: true,
+            },
+            {
+                name: 'Date',
+                selector: 'lastModified',
+                sortable: true,
+                right: true,
+                cell: item => formatDate(item.lastModified)
+            },
+            {
+                name: 'Amount',
+                selector: 'cost',
+                sortable: true,
+                right: true,
+                cell: item => `₦${item.cost}`
+            },
+            {
+                name: 'Status',
+                selector: 'status',
+                sortable: true,
+                right: true,
+                cell: item => {
+                    if (item.status === "01") return <span className="badge bg-soft-warning text-warning">Accepted</span>
+                    if (item.status === "00") return <span className="badge bg-soft-success text-success">Delivered</span>
+                    if (item.status === "02") return <span className="badge bg-soft-info text-info">Picked Up</span>
+                    if (item.status === "03") return <span className="badge bg-soft-info text-info">Created</span>
+                },
+            },
+            {
+                name: 'Payment Status',
+                selector: 'paymentStatus',
+                sortable: true,
+                right: true,
+                cell: item => {
+                    if (item.paymentStatus === 0) return <span className="badge bg-soft-danger text-danger">UnPaid</span>
+                    else return <span className="badge bg-soft-success text-success">Paid</span>
+                }
+            },
+            {
+                name: 'Action',
+                selector: 'status',
+                sortable: true,
+                right: true,
+                cell: item => {
+                    if (item.status === "03") {
+                        return <button type="button" onClick={() => this.setState({ orderId: item.id })} data-toggle="modal" data-target="#assign-to-rider" className="btn btn-xs btn-primary">Assign to rider</button>
+                    } else {
+                        return <button type="button" onClick={() => this.setState({ orderId: item.id })} className="btn btn-sm btn-primary">View Details</button>
+                    }
+
+                },
+            },
+        ];
+
         return (
+
             <div className="loading"
                 data-layout='{"mode": "light", "width": "fluid", "menuPosition": "fixed", "sidebar": { "color": "light", "size": "default", "showuser": false}, "topbar": {"color": "light"}, "showRightSidebarOnPageLoad": true}'
             >
@@ -118,64 +258,16 @@ export default class Orders extends Component {
                                     <div className="col-sm-12">
                                         <div className="card-box">
                                             <h4 className="header-title">Transactions</h4>
-                                            {/* <p className="sub-header">
-                                        Add or remove rows from your FooTable.
-                                    </p> */}
 
-                                            <div className="mb-2">
-                                                <div className="row">
-                                                    <div className="col-12 text-sm-center form-inline">
-                                                        <div className="form-group mr-2">
-                                                            {/* <button id="demo-btn-addrow" className="btn btn-primary" data-toggle="modal" data-target="#standard-modal" type="button"><i className="mdi mdi-plus-circle mr-2"></i> Add New Rider</button> */}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            <table id="datatable-buttons" className="table table-striped dt-responsive nowrap w-100">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Customer</th>
-                                                        <th>Date</th>
-                                                        <th>Amount</th>
-                                                        <th>Status</th>
-                                                        <th>Payment Status</th>
-                                                    </tr>
-                                                </thead>
-
-
-                                                <tbody>
-                                                    {this.state.orders.map((item, index) =>
-
-                                                        <tr key={index}>
-                                                            <td>
-                                                                <h5 className="m-0 font-weight-normal">{item.requestorIdentifier}</h5>
-                                                            </td>
-
-                                                            <td>
-                                                                {formatDate(item.lastModified)}
-                                                            </td>
-
-                                                            <td>
-                                                                ₦{item.cost}
-                                                            </td>
-
-                                                            <td>
-
-                                                                {item.status === "01" ? <span className="badge bg-soft-warning text-warning">Accepted</span> : item.status === "00" ? <span className="badge bg-soft-success text-success">Delivered</span> : item.status === "02" ? <span className="badge bg-soft-info text-info">Picked Up</span> : <span className="badge bg-soft-info text-info">Created</span>}
-                                                            </td>
-
-                                                            <td>
-                                                                {item.paymentStatus === 0 ? <span className="badge bg-soft-danger text-danger">UnPaid</span> : <span className="badge bg-soft-success text-success">Paid</span>}
-                                                                {/* <a href="#" className="btn btn-xs btn-light"><i className="mdi mdi-pencil"></i></a> */}
-                                                            </td>
-                                                        </tr>
-
-                                                    )}
-
-                                                </tbody>
-                                            </table>
+                                            <DataTable
+                                                title=""
+                                                striped={true}
+                                                highlightOnHover={true}
+                                                pagination={true}
+                                                progressPending={this.state.loadingOrders}
+                                                columns={columns}
+                                                data={this.state.orders}
+                                            />
 
                                         </div>
                                     </div>
@@ -205,34 +297,37 @@ export default class Orders extends Component {
                 <NotificationContainer />
 
 
-                <div id="standard-modal" className="modal fade" tabIndex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
+                <div id="assign-to-rider" className="modal fade" tabIndex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h4 className="modal-title" id="standard-modalLabel">Add New Rider</h4>
+                                <h4 className="modal-title" id="standard-modalLabel">Assign order to rider</h4>
                                 <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
                             </div>
                             <form action="#" className="px-3">
                                 <div className="modal-body">
 
                                     <div className="form-group">
-                                        <label htmlFor="managerFullName">Full Name</label>
-                                        <input className="form-control" onChange={(e) => { this.setState({ riderFullName: e.target.value }) }} type="text" required="" id="managerFullName" placeholder="Enter rider's full name" />
+                                        <label htmlFor="managerFullName">Select Rider</label>
+
+                                        <Select
+                                            onChange={(selectedItem) => this.setState({ riderId: selectedItem.value })}
+                                            options={this.state.ridersSelectList}
+                                        />
+
+
                                     </div>
 
-                                    <div className="form-group">
-                                        <label htmlFor="managerPhone">Phone Number</label>
-                                        <input className="form-control" onChange={(e) => { this.setState({ riderPhone: e.target.value }) }} type="text" required="" id="managerPhone" placeholder="Enter rider's phone number" />
-                                    </div>
+
 
                                     <div className="modal-footer">
-                                        <button type="button" className="btn btn-light" data-dismiss="modal">Cancel</button>
+                                        <button type="button" className="btn btn-light" data-dismiss="modal">Close</button>
                                         {this.state.loading ?
                                             <button type="button" disabled className="btn btn-primary">
-                                                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span> Saving...
+                                                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span> Assigning...
                                         </button>
                                             :
-                                            <button type="button" onClick={this.handleRiderSubmit} className="btn btn-primary">Save changes</button>
+                                            <button type="button" onClick={this.handleRiderSubmit} className="btn btn-primary">Assign</button>
                                         }
                                     </div>
 
