@@ -111,6 +111,10 @@ export default class Orders extends Component {
     }
 
     handleRiderSubmit = () => {
+        if(this.state.riderId === 0){
+            alert('Select a rider')
+            return;
+        }
         this.setState({ loading: true })
         const token = getToken();
         if (token) {
@@ -173,7 +177,7 @@ export default class Orders extends Component {
                 sortable: true,
                 right: true,
                 cell: item => {
-                    if (item.status === "01") return <span className="badge bg-soft-warning text-warning">Accepted</span>
+                    if (item.status === "01") return <span className="badge bg-soft-warning text-warning">Assigned</span>
                     if (item.status === "00") return <span className="badge bg-soft-success text-success">Delivered</span>
                     if (item.status === "02") return <span className="badge bg-soft-info text-info">Picked Up</span>
                     if (item.status === "03") return <span className="badge bg-soft-info text-info">Created</span>

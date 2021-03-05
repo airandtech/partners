@@ -395,7 +395,7 @@ export default class Dashboard extends Component {
 
                                                             <td>
 
-                                                            {item.status === "01" ? <span className="badge bg-soft-warning text-warning">Accepted</span> : item.status === "00" ? <span className="badge bg-soft-success text-success">Delivered</span> : item.status === "02" ? <span className="badge bg-soft-info text-info">Picked Up</span> : <span className="badge bg-soft-info text-info">Created</span>}
+                                                            {item.status === "01" ? <span className="badge bg-soft-warning text-warning">Assigned</span> : item.status === "00" ? <span className="badge bg-soft-success text-success">Delivered</span> : item.status === "02" ? <span className="badge bg-soft-info text-info">Picked Up</span> : <span className="badge bg-soft-info text-info">Created</span>}
                                                             </td>
 
                                                             <td>
