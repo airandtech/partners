@@ -153,6 +153,12 @@ export default class Orders extends Component {
 
         const columns = [
             {
+                name: 'OrderId',
+                selector: 'id',
+                sortable: true,
+                cell: item => item.id.toString().padStart(8,'0'),
+            },
+            {
                 name: 'Customer',
                 selector: 'requestorIdentifier',
                 sortable: true,
