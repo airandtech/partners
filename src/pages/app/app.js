@@ -5,8 +5,10 @@ import Dashboard from '../dashboard'
 import Profile from '../profile'
 import Riders from '../riders'
 import Orders from '../orders'
-import FooterMenuItems  from "../../components/footermenu";
+import FooterMenuItems from "../../components/footermenu";
 import OrderDetails from '../order-details'
+import Merchants from "../admin/merchants";
+import Companies from "../admin/companies";
 
 const ls = require('local-storage');
 
@@ -57,41 +59,43 @@ class AppBase extends Component {
 
     return (
       <div>
-          <Switch>
-            <Route exact path="/auth" render={() => <Login history={this.props.history} />}  />
-            <Route exact path="/" render={() => <Login history={this.props.history} />}  />
-            
-            
-            {/* <Route exact path="/account" render={() => <Profile history={this.props.history} />}  /> */}
-            {/* <Route exact path="/dashboard" render={() => <Dashboard history={this.props.history} />}  /> */}
-            <PrivateRoute exact path="/home" component={Dashboard}  />
-            <PrivateRoute path='/dashboard' component={Dashboard} />
-            <PrivateRoute path='/account' component={Profile} />
-            <PrivateRoute path='/riders' component={Riders} />
-            <PrivateRoute path='/orders' component={Orders} />
-            <PrivateRoute exact path="/orderDetails" component={OrderDetails}  />
-          </Switch>
-          {!styles.showSidebar && (
-            <FooterMenuItems styles={styles} history={this.props.history} />
-          )}
+        <Switch>
+          <Route exact path="/auth" render={() => <Login history={this.props.history} />} />
+          <Route exact path="/" render={() => <Login history={this.props.history} />} />
+
+
+          {/* <Route exact path="/account" render={() => <Profile history={this.props.history} />}  /> */}
+          {/* <Route exact path="/dashboard" render={() => <Dashboard history={this.props.history} />}  /> */}
+          <PrivateRoute exact path="/home" component={Dashboard} />
+          <PrivateRoute path='/dashboard' component={Dashboard} />
+          <PrivateRoute path='/account' component={Profile} />
+          <PrivateRoute path='/riders' component={Riders} />
+          <PrivateRoute path='/orders' component={Orders} />
+          <PrivateRoute exact path="/companies" component={Companies} />
+          <PrivateRoute exact path="/merchants" component={Merchants} />
+          <PrivateRoute exact path="/orderDetails" component={OrderDetails} />
+        </Switch>
+        {!styles.showSidebar && (
+          <FooterMenuItems styles={styles} history={this.props.history} />
+        )}
       </div>
     );
   }
 }
 
 function PrivateRoute({ component: Component, ...rest }) {
-    let sessionToken = sessionStorage.getItem('token');
-    let localToken = ls.get('token');
-    let isSetupComplete = ls.get('isSetupComplete')
- 
-    return (
-      <Route
-        {...rest} 
-        render={(props) => ( (sessionToken || localToken)  )
-          ? <Component history={props.history} {...props} />
-          : <Redirect to={{ pathname: '/auth', state: { from: props.location } }} />}
-      />
-    )
-  }
+  let sessionToken = sessionStorage.getItem('token');
+  let localToken = ls.get('token');
+  let isSetupComplete = ls.get('isSetupComplete')
+
+  return (
+    <Route
+      {...rest}
+      render={(props) => ((sessionToken || localToken))
+        ? <Component history={props.history} {...props} />
+        : <Redirect to={{ pathname: '/auth', state: { from: props.location } }} />}
+    />
+  )
+}
 
 export default AppBase;

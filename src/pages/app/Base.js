@@ -20,6 +20,8 @@ const Base = () => {
         <Route exact path="/riders" component={AppBase} />
         <Route exact path="/orderDetails" component={AppBase} />
         <Route exact path="/orders" component={AppBase} />
+        <Route exact path="/companies" component={AppBase} />
+        <Route exact path="/merchants" component={AppBase} />
         <PrivateRoute authed={isAuth} path='/dashboard' component={AppBase} />
       </Switch>
     </Router>

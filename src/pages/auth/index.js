@@ -45,6 +45,7 @@ export default class Login extends Component {
                     ls.set('token', res.data.token)
                     ls.set('isSetupComplete', res.data.isSetupComplete)
                     ls.set('username', res.data.username)
+                    ls.set('role', res.data.role)
                     res.data.isSetupComplete ? history.push("/home") : history.push("/account")
                 } else {
                     this.setState({ loading: false, isLoginInvalid: true, authMessage: res.data.message });

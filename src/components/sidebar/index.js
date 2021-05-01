@@ -9,13 +9,15 @@ export default class SideBar extends Component {
         super(props);
 
         this.state = {
-            isSetupComplete: false
+            isSetupComplete: false,
+            role: '',
         }
     }
 
     componentDidMount = () => {
         let isSetupComplete = ls.get('isSetupComplete');
-        this.setState({ isSetupComplete })
+        let role = ls.get('role');
+        this.setState({ isSetupComplete, role })
     }
     render() {
         return (
@@ -105,6 +107,26 @@ export default class SideBar extends Component {
                                     </a>
                                 </li>
                                     </>
+                                : <></> }
+
+                                {this.state.role === 'Admin' ? 
+                                <>
+                                <li className="menu-title mt-2">Admin Management</li>
+
+                                <li>
+                                    <a href="/companies">
+                                        <i className="fas fa-globe-africa"></i>
+                                        <span> Companies </span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="/merchants">
+                                        <i className="fas fa-address-book"></i>
+                                        <span> Merchants </span>
+                                    </a>
+                                </li>
+                                 </>
                                 : <></> }
 
                             </ul>
