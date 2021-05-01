@@ -126,6 +126,12 @@ export default class SideBar extends Component {
                                         <span> Merchants </span>
                                     </a>
                                 </li>
+                                <li>
+                                    <a href="/users">
+                                        <i className="fas fa-users"></i>
+                                        <span> Users </span>
+                                    </a>
+                                </li>
                                  </>
                                 : <></> }
 

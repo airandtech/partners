@@ -9,6 +9,7 @@ import FooterMenuItems from "../../components/footermenu";
 import OrderDetails from '../order-details'
 import Merchants from "../admin/merchants";
 import Companies from "../admin/companies";
+import Users from "../admin/users";
 
 const ls = require('local-storage');
 
@@ -73,6 +74,7 @@ class AppBase extends Component {
           <PrivateRoute path='/orders' component={Orders} />
           <PrivateRoute exact path="/companies" component={Companies} />
           <PrivateRoute exact path="/merchants" component={Merchants} />
+          <PrivateRoute exact path="/users" component={Users} />
           <PrivateRoute exact path="/orderDetails" component={OrderDetails} />
         </Switch>
         {!styles.showSidebar && (
